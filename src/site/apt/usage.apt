@@ -1,0 +1,65 @@
+Maven 2 Macker Plugin - How to Use
+
+ This plugin executes {{{http://www.innig.net/macker/}Macker}} against your compiled classes.
+
+
+*How to Execute Macker against your Project
+
+**Configuration Parameters
+
+ The outputName parameter allows you to name the generated XML output file. The default is macker-out.xml.
+ 
+ The maxmsg parameter corresponds to the printMaxMessages setting in Macker.
+ 
+ The print parameter corresponds to the printThreshold setting in Macker. Valid values are debug, info, warning, and error.
+ 
+ The anger parameter corresponds to the angerThreshold setting in Macker. Valid values are debug, info, warning, and error.
+ 
+ The rule parameter allows the user to specify the name of the rules XML file that Macker will use. The default is macker-rules.xml. At this time, only one XML file is allowed.
+ 
+ The verbose parameter corresponds to the verbose setting in Macker.
+ 
+ The variables (map) parameter allows you to define additional variables that will be passed to Macker.
+
+ Please read the {{{http://www.innig.net/macker/guide/index.html}Macker documentation}} for more information.
+
+-------------------
+<build>
+  [...]
+  <plugin>
+    <groupId>org.codehaus.mojo</groupId>
+      <artifactId>macker-maven-plugin</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <configuration>
+        <outputName>macker-out.xml</outputName>
+        <maxmsg>0</maxmsg>
+        <print>error|warning|info|debug</print>
+        <anger>error|warning|info|debug</anger>
+        <rule>macker-rules.xml</rule>
+        <verbose>true|false</verbose>
+        <variables>
+          <key1>value1</key1>
+          [...]
+        </variables>
+      </configuration>
+      <executions>
+        <execution>
+          <phase>compile</phase>
+          <goals>
+            <goal>macker</goal>
+          </goals>
+        </execution>
+      </executions>
+  </plugin>
+  [...]
+</build>
+-------------------
+ 
+*Known Issues and Limitations
+ 
+ As with similar plugins (Findbugs etc), when running Macker on a project, the default heap size might not be enough to complete the build. For now there is no way to fork Macker and run with it's own memory requirements, but the following system variable will allow you to do so for Maven:
+
+-------------------
+export MAVEN_OPTS=-Xmx384M
+-------------------
+
