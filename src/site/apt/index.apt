@@ -1,0 +1,9 @@
+Maven 2 Macker Plugin - Introduction
+
+ Macker is a build-time architectural rule checking utility for Java developers. It's meant to model the architectural ideals programmers always dream up for their projects, and then break -- it helps keep code clean and consistent. You can tailor a rules file to suit a specific project's structure, or write some general "good practice" rules for your code. Macker doesn't try to shove anybody else's rules down your throat; it's flexible, and writing a rules file is part of the development process for each unique project.
+ 
+ Macker is free software, available under the terms of the GNU Public License. Macker was originally developed by Paul Cantrell.
+ 
+ Macker uses BCEL to analyze Java bytecode.
+ 
+ This introduction is an excerpt from the FAQ at {{{http://www.innig.net/macker/faq.html}Macker's home page}}.
