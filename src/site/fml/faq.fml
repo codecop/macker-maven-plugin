@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+ <part id="General">
+   <faq id="info">
+     <question>Where can I get more information about Macker?</question>
+     <answer>
+       <p>
+         The <a href="http://www.innig.net/macker/guide/index.html">Macker documentation</a> is a good place to start.
+       </p>
+     </answer>
+   </faq>
+   <faq id="execution">
+     <question>How do I run the Macker plugin?</question>
+     <answer>
+       <p>Bind the plugin to goal macker and phase compile. Or from the command line, run:
+       </p>
+       <p>
+<code>
+  mvn macker:macker test
+</code>
+       </p>
+     </answer>
+   </faq>
+   <faq id="tests">
+     <question>Can I run Macker on my test classes?</question>
+     <answer>
+       <p>
+         No, Macker is not designed for that purpose.
+       </p>
+     </answer>
+   </faq>
+ </part>
+</faqs>
