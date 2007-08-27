@@ -1,27 +1,19 @@
 package org.codehaus.mojo.macker;
 
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Copyright 2007 Wayne Fay. Created August 16, 2007.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-/*
- * Copyright 2007 Wayne Fay.
- * Created on August 16, 2007
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import org.apache.maven.project.MavenProject;
@@ -51,7 +43,7 @@ import net.innig.macker.structure.ClassParseException;
  * @requiresDependencyResolution
  * @requiresProject
  *
- * @author <a href="mailto:wfay@codehaus.org">Wayne Fay</a>
+ * @author <a href="http://www.http://codehaus.org/~wfay/">Wayne Fay</a>
  */
 public class MackerMojo extends AbstractMojo
 {
@@ -85,21 +77,21 @@ public class MackerMojo extends AbstractMojo
      *
      * @parameter expression="${maxmsg}" default-value="0"
      */
-    private int printMaxMessages;
+    private int maxmsg;
 
     /**
      * Print threshold. Valid options are error, warning, info, and debug.
      *
      * @parameter expression="${print}" 
      */
-    private String printThreshold;
+    private String print;
 
     /**
      * Anger threshold. Valid options are error, warning, info, and debug.
      *
      * @parameter expression="${anger}" 
      */
-    private String angerThreshold;
+    private String anger;
 
     /**
      * Name of the Macker rules file.
@@ -152,17 +144,17 @@ public class MackerMojo extends AbstractMojo
                 Macker macker = new net.innig.macker.Macker();
                 macker.setVerbose( verbose );
                 macker.setXmlReportFile( outputFile );
-                if ( printMaxMessages > 0 )
+                if ( maxmsg > 0 )
                 {
-                    macker.setPrintMaxMessages( printMaxMessages );
+                    macker.setPrintMaxMessages( maxmsg );
                 }
-                if ( printThreshold != null )
+                if ( print != null )
                 {
-                    macker.setPrintThreshold( RuleSeverity.fromName( printThreshold ) );
+                    macker.setPrintThreshold( RuleSeverity.fromName( print ) );
                 }
-                if ( angerThreshold != null )
+                if ( anger != null )
                 {
-                    macker.setAngerThreshold( RuleSeverity.fromName( angerThreshold ) );
+                    macker.setAngerThreshold( RuleSeverity.fromName( anger ) );
                 }
                 macker.addRulesFile( ruleFile );
 
