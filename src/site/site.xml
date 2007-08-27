@@ -1,29 +1,34 @@
-<project name="Maven Macker Plugin">
-   <bannerLeft>
-      <name>Mojo</name>
-      <src>http://mojo.codehaus.org/images/mojo_logo.png</src>
-      <href>http://mojo.codehaus.org</href>
-   </bannerLeft>
-   <bannerRight>
-      <name>Codehaus</name>
-      <src>http://mojo.codehaus.org/images/codehaus-small.png</src>
-      <href>http://www.codehaus.org</href>
-   </bannerRight>
-   <body>
-      <links>
-         <item name="Mojo" href="http://mojo.codehaus.org"/>
-         <item name="Maven" href="http://maven.apache.org/"/>
-         <item name="Macker" href="http://www.innig.net/macker/"/>
-      </links>
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+  ~ Copyright 2007 Wayne Fay.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project>
+  <body>
+    <links>
+      <item name="Macker" href="http://www.innig.net/macker/"/>
+    </links>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="macker-mojo.html"/> <!--plugin-info.html"/-->
+      <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
-    <!--menu name="Examples">
-      <item name="Sample Report" href="examples/macker.html"/>
-    </menu-->
-    ${reports}
+    <menu name="Examples">
+      <item name="A Simple Example" href="examples/simple.html"/>
+    </menu>
   </body>
 </project>

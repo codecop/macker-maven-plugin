@@ -132,7 +132,21 @@
       <version>2.6.2</version>
     </dependency>
   </dependencies>
-  <build/>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-docck-plugin</artifactId>
+        <!--executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions-->
+      </plugin>
+    </plugins>
+  </build>
   <reporting>
     <plugins>
       <plugin>
