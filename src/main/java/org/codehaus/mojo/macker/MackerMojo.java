@@ -43,7 +43,7 @@ import net.innig.macker.structure.ClassParseException;
  * @requiresDependencyResolution
  * @requiresProject
  *
- * @author <a href="http://www.http://codehaus.org/~wfay/">Wayne Fay</a>
+ * @author <a href="http://www.codehaus.org/~wfay/">Wayne Fay</a>
  */
 public class MackerMojo extends AbstractMojo
 {
@@ -56,6 +56,15 @@ public class MackerMojo extends AbstractMojo
      */
     private File classesDirectory;
 
+    /**
+     * Directory containing the rules files for Macker.
+     *
+     * @parameter expression="${basedir}/src/main/config"
+     * @required
+     * @readonly
+     */
+    private File rulesDirectory;
+      
     /**
      * Directory where the Macker output file will be generated.
      *
@@ -99,6 +108,13 @@ public class MackerMojo extends AbstractMojo
      * @parameter expression="${rule}" default-value="macker-rules.xml"
      */
     private String rule;
+      
+    /**
+     * Name of the Macker rules files.
+     *
+     * @parameter expression="${rules}"
+     */
+    private String[] rules;
 
     /**
      * Variables map that will be passed to Macker.
@@ -130,8 +146,13 @@ public class MackerMojo extends AbstractMojo
     public void execute() throws MojoExecutionException
     {
         File outputFile = new File( outputDirectory, outputName );
-        File ruleFile = new File( classesDirectory, rule );
-
+      
+        if ((null==rules) || (0 == rules.length))
+        {
+            rules = new String[1];
+            rules[0] = rule;
+        }
+          
         String files[] = FileUtils.getFilesFromExtension( classesDirectory.getPath(), new String[]{"class"} );
         if ( ( files == null ) || ( files.length == 0 ) )
         {
@@ -156,7 +177,15 @@ public class MackerMojo extends AbstractMojo
                 {
                     macker.setAngerThreshold( RuleSeverity.fromName( anger ) );
                 }
-                macker.addRulesFile( ruleFile );
+                
+                File ruleFile = null;
+                for (int i=0; i<rules.length  ; i++)
+                {
+                  getLog().debug( "Add rules file: " + rulesDirectory + File.separator + rules[i] );
+                  ruleFile = new File( rulesDirectory, rules[i] );
+                  macker.addRulesFile( ruleFile );
+                }
+
 
                 if ( ( variables != null ) && ( variables.size() > 0 ) )
                 {
