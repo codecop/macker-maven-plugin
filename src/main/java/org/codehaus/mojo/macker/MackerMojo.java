@@ -36,21 +36,21 @@ import net.innig.macker.structure.ClassParseException;
 
 /**
  * Runs Macker against the compiled classes of the project.
- *
+ * 
  * @goal macker
  * @description Executes Macker against the classes.
  * @execute phase="compile"
  * @requiresDependencyResolution compile
  * @requiresProject
- *
  * @author <a href="http://www.codehaus.org/~wfay/">Wayne Fay</a>
  * @author <a href="http://people.apache.org/~bellingard/">Fabrice Bellingard</a>
  */
-public class MackerMojo extends AbstractMojo
+public class MackerMojo
+    extends AbstractMojo
 {
     /**
      * Directory containing the class files for Macker to analyze.
-     *
+     * 
      * @parameter expression="${project.build.outputDirectory}"
      * @required
      * @readonly
@@ -59,15 +59,15 @@ public class MackerMojo extends AbstractMojo
 
     /**
      * Directory containing the rules files for Macker.
-     *
+     * 
      * @parameter expression="${basedir}/src/main/config"
      * @required
      */
     private File rulesDirectory;
-      
+
     /**
      * Directory where the Macker output file will be generated.
-     *
+     * 
      * @parameter default-value="${project.build.directory}"
      * @required
      */
@@ -75,7 +75,7 @@ public class MackerMojo extends AbstractMojo
 
     /**
      * Name of the Macker output file.
-     *
+     * 
      * @parameter expression="${outputName}" default-value="macker-out.xml"
      * @required
      */
@@ -83,56 +83,63 @@ public class MackerMojo extends AbstractMojo
 
     /**
      * Print max messages.
-     *
+     * 
      * @parameter expression="${maxmsg}" default-value="0"
      */
     private int maxmsg;
 
     /**
      * Print threshold. Valid options are error, warning, info, and debug.
-     *
-     * @parameter expression="${print}" 
+     * 
+     * @parameter expression="${print}"
      */
     private String print;
 
     /**
      * Anger threshold. Valid options are error, warning, info, and debug.
-     *
-     * @parameter expression="${anger}" 
+     * 
+     * @parameter expression="${anger}"
      */
     private String anger;
 
     /**
      * Name of the Macker rules file.
-     *
+     * 
      * @parameter expression="${rule}" default-value="macker-rules.xml"
      */
     private String rule;
-      
+
     /**
      * Name of the Macker rules files.
-     *
+     * 
      * @parameter expression="${rules}"
      */
     private String[] rules;
 
     /**
      * Variables map that will be passed to Macker.
-     *
-     * @parameter expression="${variables}" 
+     * 
+     * @parameter expression="${variables}"
      */
     private Map variables = new HashMap();
 
     /**
      * Verbose setting for Macker tool execution.
-     *
+     * 
      * @parameter expression="${verbose}" default-value="false"
      */
     private boolean verbose;
 
     /**
+     * Fail the build on an error.
+     * 
+     * @parameter default-value="true"
+     */
+    private boolean failOnError;
+
+    /**
      * <i>Maven Internal</i>: Project to interact with.
-     *
+     * 
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -141,19 +148,20 @@ public class MackerMojo extends AbstractMojo
 
     /**
      * @throws MojoExecutionException
-     * See org.apache.maven.plugin.Mojo#execute()
+     * @see org.apache.maven.plugin.Mojo#execute()
      */
-    public void execute() throws MojoExecutionException
+    public void execute()
+        throws MojoExecutionException
     {
         File outputFile = new File( outputDirectory, outputName );
-      
-        if ((null==rules) || (0 == rules.length))
+
+        if ( ( null == rules ) || ( 0 == rules.length ) )
         {
             rules = new String[1];
             rules[0] = rule;
         }
-          
-        String files[] = FileUtils.getFilesFromExtension( classesDirectory.getPath(), new String[]{"class"} );
+
+        String files[] = FileUtils.getFilesFromExtension( classesDirectory.getPath(), new String[] { "class" } );
         if ( ( files == null ) || ( files.length == 0 ) )
         {
             getLog().info( "No class files in specified directory " + classesDirectory );
@@ -177,15 +185,14 @@ public class MackerMojo extends AbstractMojo
                 {
                     macker.setAngerThreshold( RuleSeverity.fromName( anger ) );
                 }
-                
-                File ruleFile = null;
-                for (int i=0; i<rules.length  ; i++)
-                {
-                  getLog().debug( "Add rules file: " + rulesDirectory + File.separator + rules[i] );
-                  ruleFile = new File( rulesDirectory, rules[i] );
-                  macker.addRulesFile( ruleFile );
-                }
 
+                File ruleFile = null;
+                for ( int i = 0; i < rules.length; i++ )
+                {
+                    getLog().debug( "Add rules file: " + rulesDirectory + File.separator + rules[i] );
+                    ruleFile = new File( rulesDirectory, rules[i] );
+                    macker.addRulesFile( ruleFile );
+                }
 
                 if ( ( variables != null ) && ( variables.size() > 0 ) )
                 {
@@ -206,7 +213,10 @@ public class MackerMojo extends AbstractMojo
             catch ( MackerIsMadException ex )
             {
                 getLog().warn( "Macker has detected violations. Please refer to the XML report for more information." );
-                throw new MojoExecutionException( "MackerIsMadException during Macker execution.", ex );
+                if ( failOnError )
+                {
+                    throw new MojoExecutionException( "MackerIsMadException during Macker execution.", ex );
+                }
             }
             catch ( RulesException ex )
             {
@@ -229,7 +239,7 @@ public class MackerMojo extends AbstractMojo
 
     /**
      * Returns the MavenProject object.
-     *
+     * 
      * @return MavenProject
      */
     public MavenProject getProject()
