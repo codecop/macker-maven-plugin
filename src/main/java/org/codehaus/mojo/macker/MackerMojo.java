@@ -40,10 +40,11 @@ import net.innig.macker.structure.ClassParseException;
  * @goal macker
  * @description Executes Macker against the classes.
  * @execute phase="compile"
- * @requiresDependencyResolution
+ * @requiresDependencyResolution compile
  * @requiresProject
  *
  * @author <a href="http://www.codehaus.org/~wfay/">Wayne Fay</a>
+ * @author <a href="http://people.apache.org/~bellingard/">Fabrice Bellingard</a>
  */
 public class MackerMojo extends AbstractMojo
 {
@@ -155,7 +156,7 @@ public class MackerMojo extends AbstractMojo
         String files[] = FileUtils.getFilesFromExtension( classesDirectory.getPath(), new String[]{"class"} );
         if ( ( files == null ) || ( files.length == 0 ) )
         {
-            System.out.println( "No class files in specified directory " + classesDirectory );
+            getLog().info( "No class files in specified directory " + classesDirectory );
         }
         else
         {
@@ -204,28 +205,24 @@ public class MackerMojo extends AbstractMojo
             }
             catch ( MackerIsMadException ex )
             {
-                System.out.println( ex.getMessage() );
+                getLog().warn( "Macker has detected violations. Please refer to the XML report for more information." );
                 throw new MojoExecutionException( "MackerIsMadException during Macker execution.", ex );
             }
             catch ( RulesException ex )
             {
-                System.out.println( ex.getMessage() );
-                throw new MojoExecutionException( "RulesException during Macker execution.", ex );
+                throw new MojoExecutionException( "Macker rules are not properly defined: " + ex.getMessage(), ex );
             }
             catch ( ListenerException ex )
             {
-                System.out.println( ex.getMessage() );
-                throw new MojoExecutionException( "ListenerException during Macker execution.", ex );
+                throw new MojoExecutionException( "Error during Macker execution: " + ex.getMessage(), ex );
             }
             catch ( ClassParseException ex )
             {
-                System.out.println( ex.getMessage() );
-                throw new MojoExecutionException( "ClassParseException during Macker execution.", ex );
+                throw new MojoExecutionException( "Error during Macker execution: " + ex.getMessage(), ex );
             }
             catch ( IOException ex )
             {
-                System.out.println( ex.getMessage() );
-                throw new MojoExecutionException( "IOException during Macker execution.", ex );
+                throw new MojoExecutionException( "Error during Macker execution: " + ex.getMessage(), ex );
             }
         }
     }
