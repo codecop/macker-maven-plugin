@@ -61,7 +61,6 @@ public class MackerMojo extends AbstractMojo
      *
      * @parameter expression="${basedir}/src/main/config"
      * @required
-     * @readonly
      */
     private File rulesDirectory;
       
@@ -228,12 +227,6 @@ public class MackerMojo extends AbstractMojo
                 System.out.println( ex.getMessage() );
                 throw new MojoExecutionException( "IOException during Macker execution.", ex );
             }
-            /*
-            catch ( Exception ex )
-            {
-                throw new MojoExecutionException( "Exception during Macker execution.", ex );
-            }
-            */
         }
     }
 
