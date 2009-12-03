@@ -153,88 +153,151 @@ public class MackerMojo
     public void execute()
         throws MojoExecutionException
     {
-        File outputFile = new File( outputDirectory, outputName );
-
+        // check if rules were specified
         if ( ( null == rules ) || ( 0 == rules.length ) )
         {
             rules = new String[1];
             rules[0] = rule;
         }
 
+        // check if there are class files to analyze 
         String files[] = FileUtils.getFilesFromExtension( classesDirectory.getPath(), new String[] { "class" } );
         if ( ( files == null ) || ( files.length == 0 ) )
         {
+            // no class file, we can't do anything
             getLog().info( "No class files in specified directory " + classesDirectory );
         }
         else
         {
-            try
-            {
-                Macker macker = new net.innig.macker.Macker();
-                macker.setVerbose( verbose );
-                macker.setXmlReportFile( outputFile );
-                if ( maxmsg > 0 )
-                {
-                    macker.setPrintMaxMessages( maxmsg );
-                }
-                if ( print != null )
-                {
-                    macker.setPrintThreshold( RuleSeverity.fromName( print ) );
-                }
-                if ( anger != null )
-                {
-                    macker.setAngerThreshold( RuleSeverity.fromName( anger ) );
-                }
+            // let's go!
+            File outputFile = new File( outputDirectory, outputName );
+            launchMacker( outputFile, files );
+        }
+    }
 
-                File ruleFile = null;
-                for ( int i = 0; i < rules.length; i++ )
-                {
-                    getLog().debug( "Add rules file: " + rulesDirectory + File.separator + rules[i] );
-                    ruleFile = new File( rulesDirectory, rules[i] );
-                    macker.addRulesFile( ruleFile );
-                }
-
-                if ( ( variables != null ) && ( variables.size() > 0 ) )
-                {
-                    Iterator it = variables.keySet().iterator();
-                    while ( it.hasNext() )
-                    {
-                        String key = (String) it.next();
-                        macker.setVariable( key, (String) variables.get( key ) );
-                    }
-                }
-
-                for ( int i = 0; i < files.length; i++ )
-                {
-                    macker.addClass( new File( files[i] ) );
-                }
-                macker.check();
-            }
-            catch ( MackerIsMadException ex )
+    /**
+     * Executes Macker as requested.
+     * 
+     * @param outputFile the result file that will should produced by macker
+     * @param files classes files that should be analysed
+     * @throws MojoExecutionException if a error occurs during Macker execution
+     */
+    private void launchMacker( File outputFile, String[] files )
+        throws MojoExecutionException
+    {
+        try
+        {
+            Macker macker = createMacker( outputFile );
+            configureRules( macker );
+            initMackerVariables( macker );
+            specifyClassFilesToAnalyse( files, macker );
+            // we're OK with configuration, let's run Macker
+            macker.check();
+        }
+        catch ( MackerIsMadException ex )
+        {
+            getLog().warn( "Macker has detected violations. Please refer to the XML report for more information." );
+            if ( failOnError )
             {
-                getLog().warn( "Macker has detected violations. Please refer to the XML report for more information." );
-                if ( failOnError )
-                {
-                    throw new MojoExecutionException( "MackerIsMadException during Macker execution.", ex );
-                }
-            }
-            catch ( RulesException ex )
-            {
-                throw new MojoExecutionException( "Macker rules are not properly defined: " + ex.getMessage(), ex );
-            }
-            catch ( ListenerException ex )
-            {
-                throw new MojoExecutionException( "Error during Macker execution: " + ex.getMessage(), ex );
-            }
-            catch ( ClassParseException ex )
-            {
-                throw new MojoExecutionException( "Error during Macker execution: " + ex.getMessage(), ex );
-            }
-            catch ( IOException ex )
-            {
-                throw new MojoExecutionException( "Error during Macker execution: " + ex.getMessage(), ex );
+                throw new MojoExecutionException( "MackerIsMadException during Macker execution.", ex );
             }
         }
+        catch ( RulesException ex )
+        {
+            throw new MojoExecutionException( "Macker rules are not properly defined: " + ex.getMessage(), ex );
+        }
+        catch ( ListenerException ex )
+        {
+            throw new MojoExecutionException( "Error during Macker execution: " + ex.getMessage(), ex );
+        }
+        catch ( ClassParseException ex )
+        {
+            throw new MojoExecutionException( "Error during Macker execution: " + ex.getMessage(), ex );
+        }
+        catch ( IOException ex )
+        {
+            throw new MojoExecutionException( "Error during Macker execution: " + ex.getMessage(), ex );
+        }
+    }
+
+    /**
+     * Tell Macker where to look for Class files to analyze.
+     * 
+     * @param files the ".class" files to analyze
+     * @param macker the Macker instance
+     * @throws IOException if there's a problem reading a file
+     * @throws ClassParseException if there's a problem parsing a class
+     */
+    private void specifyClassFilesToAnalyse( String[] files, Macker macker )
+        throws IOException, ClassParseException
+    {
+        for ( int i = 0; i < files.length; i++ )
+        {
+            macker.addClass( new File( files[i] ) );
+        }
+    }
+
+    /**
+     * If specific variables are set in the POM, give them to Macker.
+     * 
+     * @param macker the Macker isntance
+     */
+    private void initMackerVariables( Macker macker )
+    {
+        if ( ( variables != null ) && ( variables.size() > 0 ) )
+        {
+            Iterator it = variables.keySet().iterator();
+            while ( it.hasNext() )
+            {
+                String key = (String) it.next();
+                macker.setVariable( key, (String) variables.get( key ) );
+            }
+        }
+    }
+
+    /**
+     * Configure Macker with the rule files specified in the POM.
+     * 
+     * @param macker the Macker instance
+     * @throws IOException if there's a problem reading a file
+     * @throws RulesException if there's a problem parsing a rule file
+     */
+    private void configureRules( Macker macker )
+        throws IOException, RulesException
+    {
+        File ruleFile = null;
+        for ( int i = 0; i < rules.length; i++ )
+        {
+            getLog().debug( "Add rules file: " + rulesDirectory + File.separator + rules[i] );
+            ruleFile = new File( rulesDirectory, rules[i] );
+            macker.addRulesFile( ruleFile );
+        }
+    }
+
+    /**
+     * Prepares Macker for the analysis.
+     * 
+     * @param outputFile the result file that will should produced by Macker
+     * @return the new instance of Macker
+     */
+    private Macker createMacker( File outputFile )
+    {
+        Macker macker = new net.innig.macker.Macker();
+        macker.setVerbose( verbose );
+        macker.setXmlReportFile( outputFile );
+        if ( maxmsg > 0 )
+        {
+            macker.setPrintMaxMessages( maxmsg );
+        }
+        if ( print != null )
+        {
+            macker.setPrintThreshold( RuleSeverity.fromName( print ) );
+        }
+        if ( anger != null )
+        {
+            macker.setAngerThreshold( RuleSeverity.fromName( anger ) );
+        }
+        return macker;
     }
 
     /**
