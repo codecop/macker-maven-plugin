@@ -193,6 +193,8 @@ public class MackerMojo
             specifyClassFilesToAnalyse( files, macker );
             // we're OK with configuration, let's run Macker
             macker.check();
+            // if we're here, then everything went fine
+            getLog().info( "Macker has not found any violation." );
         }
         catch ( MackerIsMadException ex )
         {
