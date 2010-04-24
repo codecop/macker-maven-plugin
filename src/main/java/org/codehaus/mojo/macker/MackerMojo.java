@@ -18,6 +18,7 @@ package org.codehaus.mojo.macker;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
@@ -122,7 +123,7 @@ public class MackerMojo
      *
      * @parameter expression="${variables}"
      */
-    private Map variables = new HashMap();
+    private Map<String, String> variables = new HashMap<String, String>();
 
     /**
      * Verbose setting for Macker tool execution.
@@ -152,13 +153,18 @@ public class MackerMojo
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         // check if rules were specified
         if ( null == rules || 0 == rules.length )
         {
             rules = new String[1];
             rules[0] = rule;
+        }
+
+        if ( !classesDirectory.isDirectory() )
+        {
+           throw new MojoExecutionException( "Error during Macker execution: " + classesDirectory.getAbsolutePath() + " is not a directory" );
         }
 
         // check if there are class files to analyze
@@ -170,6 +176,14 @@ public class MackerMojo
         }
         else
         {
+            if ( !outputDirectory.exists() )
+            {
+               if ( !outputDirectory.mkdirs() )
+               {
+                  throw new MojoExecutionException( "Error during Macker execution: Could not create directory " + outputDirectory.getAbsolutePath() );
+               }
+            }
+
             // let's go!
             File outputFile = new File( outputDirectory, outputName );
             launchMacker( outputFile, files );
@@ -182,9 +196,10 @@ public class MackerMojo
      * @param outputFile the result file that will should produced by macker
      * @param files classes files that should be analysed
      * @throws MojoExecutionException if a error occurs during Macker execution
+     * @throws MojoFailureException if Macker detects a failure.
      */
     private void launchMacker( File outputFile, String[] files )
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         try
         {
@@ -202,7 +217,7 @@ public class MackerMojo
             getLog().warn( "Macker has detected violations. Please refer to the XML report for more information." );
             if ( failOnError )
             {
-                throw new MojoExecutionException( "MackerIsMadException during Macker execution.", ex );
+                throw new MojoFailureException( "MackerIsMadException during Macker execution.", ex );
             }
         }
         catch ( RulesException ex )
@@ -249,11 +264,11 @@ public class MackerMojo
     {
         if ( variables != null && variables.size() > 0 )
         {
-            Iterator it = variables.keySet().iterator();
+            Iterator<String> it = variables.keySet().iterator();
             while ( it.hasNext() )
             {
-                String key = (String) it.next();
-                macker.setVariable( key, (String) variables.get( key ) );
+                String key = it.next();
+                macker.setVariable( key, variables.get( key ) );
             }
         }
     }
