@@ -16,27 +16,28 @@ package org.codehaus.mojo.macker;
  * limitations under the License.
  */
 
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
-import java.io.IOException;
 
 import org.codehaus.plexus.util.FileUtils;
+
 import net.innig.macker.Macker;
-import net.innig.macker.rule.RuleSeverity;
-import net.innig.macker.rule.RulesException;
 import net.innig.macker.event.ListenerException;
 import net.innig.macker.event.MackerIsMadException;
+import net.innig.macker.rule.RuleSeverity;
+import net.innig.macker.rule.RulesException;
 import net.innig.macker.structure.ClassParseException;
 
 /**
  * Runs Macker against the compiled classes of the project.
- * 
+ *
  * @goal macker
  * @description Executes Macker against the classes.
  * @execute phase="compile"
@@ -50,7 +51,7 @@ public class MackerMojo
 {
     /**
      * Directory containing the class files for Macker to analyze.
-     * 
+     *
      * @parameter expression="${project.build.outputDirectory}"
      * @required
      * @readonly
@@ -59,7 +60,7 @@ public class MackerMojo
 
     /**
      * Directory containing the rules files for Macker.
-     * 
+     *
      * @parameter expression="${basedir}/src/main/config"
      * @required
      */
@@ -67,7 +68,7 @@ public class MackerMojo
 
     /**
      * Directory where the Macker output file will be generated.
-     * 
+     *
      * @parameter default-value="${project.build.directory}"
      * @required
      */
@@ -75,7 +76,7 @@ public class MackerMojo
 
     /**
      * Name of the Macker output file.
-     * 
+     *
      * @parameter expression="${outputName}" default-value="macker-out.xml"
      * @required
      */
@@ -83,63 +84,63 @@ public class MackerMojo
 
     /**
      * Print max messages.
-     * 
+     *
      * @parameter expression="${maxmsg}" default-value="0"
      */
     private int maxmsg;
 
     /**
      * Print threshold. Valid options are error, warning, info, and debug.
-     * 
+     *
      * @parameter expression="${print}"
      */
     private String print;
 
     /**
      * Anger threshold. Valid options are error, warning, info, and debug.
-     * 
+     *
      * @parameter expression="${anger}"
      */
     private String anger;
 
     /**
      * Name of the Macker rules file.
-     * 
+     *
      * @parameter expression="${rule}" default-value="macker-rules.xml"
      */
     private String rule;
 
     /**
      * Name of the Macker rules files.
-     * 
+     *
      * @parameter expression="${rules}"
      */
     private String[] rules;
 
     /**
      * Variables map that will be passed to Macker.
-     * 
+     *
      * @parameter expression="${variables}"
      */
     private Map variables = new HashMap();
 
     /**
      * Verbose setting for Macker tool execution.
-     * 
+     *
      * @parameter expression="${verbose}" default-value="false"
      */
     private boolean verbose;
 
     /**
      * Fail the build on an error.
-     * 
+     *
      * @parameter default-value="true"
      */
     private boolean failOnError;
 
     /**
      * <i>Maven Internal</i>: Project to interact with.
-     * 
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -154,15 +155,15 @@ public class MackerMojo
         throws MojoExecutionException
     {
         // check if rules were specified
-        if ( ( null == rules ) || ( 0 == rules.length ) )
+        if ( null == rules || 0 == rules.length )
         {
             rules = new String[1];
             rules[0] = rule;
         }
 
-        // check if there are class files to analyze 
+        // check if there are class files to analyze
         String files[] = FileUtils.getFilesFromExtension( classesDirectory.getPath(), new String[] { "class" } );
-        if ( ( files == null ) || ( files.length == 0 ) )
+        if ( files == null || files.length == 0 )
         {
             // no class file, we can't do anything
             getLog().info( "No class files in specified directory " + classesDirectory );
@@ -177,7 +178,7 @@ public class MackerMojo
 
     /**
      * Executes Macker as requested.
-     * 
+     *
      * @param outputFile the result file that will should produced by macker
      * @param files classes files that should be analysed
      * @throws MojoExecutionException if a error occurs during Macker execution
@@ -224,7 +225,7 @@ public class MackerMojo
 
     /**
      * Tell Macker where to look for Class files to analyze.
-     * 
+     *
      * @param files the ".class" files to analyze
      * @param macker the Macker instance
      * @throws IOException if there's a problem reading a file
@@ -241,12 +242,12 @@ public class MackerMojo
 
     /**
      * If specific variables are set in the POM, give them to Macker.
-     * 
+     *
      * @param macker the Macker isntance
      */
     private void initMackerVariables( Macker macker )
     {
-        if ( ( variables != null ) && ( variables.size() > 0 ) )
+        if ( variables != null && variables.size() > 0 )
         {
             Iterator it = variables.keySet().iterator();
             while ( it.hasNext() )
@@ -259,7 +260,7 @@ public class MackerMojo
 
     /**
      * Configure Macker with the rule files specified in the POM.
-     * 
+     *
      * @param macker the Macker instance
      * @throws IOException if there's a problem reading a file
      * @throws RulesException if there's a problem parsing a rule file
@@ -278,7 +279,7 @@ public class MackerMojo
 
     /**
      * Prepares Macker for the analysis.
-     * 
+     *
      * @param outputFile the result file that will should produced by Macker
      * @return the new instance of Macker
      */
@@ -304,11 +305,11 @@ public class MackerMojo
 
     /**
      * Returns the MavenProject object.
-     * 
+     *
      * @return MavenProject
      */
     public MavenProject getProject()
     {
-        return this.project;
+        return project;
     }
 }
