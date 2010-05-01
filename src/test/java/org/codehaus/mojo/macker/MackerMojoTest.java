@@ -79,4 +79,14 @@ public class MackerMojoTest extends AbstractMojoTestCase
         }
     }
 
+    public void testSkipped() throws Exception
+    {
+        File testPom = new File( getBasedir(), "src/test/resources/unit/skip-plugin-config.xml" );
+        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
+        mojo.execute();
+
+        File generatedFile = new File( getBasedir(), "target/test/unit/target/macker-out-violations.xml" );
+        assertFalse( generatedFile.exists() );
+    }
+
 }
