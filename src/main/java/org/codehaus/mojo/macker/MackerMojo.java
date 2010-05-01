@@ -23,11 +23,18 @@ import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 import net.innig.macker.Macker;
 import net.innig.macker.event.ListenerException;
@@ -58,6 +65,40 @@ public class MackerMojo
      * @readonly
      */
     private File classesDirectory;
+
+    /**
+     * The directories containing the test-classes to be analyzed.
+     *
+     * @parameter expression="${project.build.testOutputDirectory}"
+     * @required
+     * @readonly
+     */
+    private File testClassesDirectory;
+
+    /**
+     * A list of files to exclude from checking. Can contain Ant-style wildcards and double wildcards. Note that these
+     * exclusion patterns only operate on the path of a source file relative to its source root directory. In other
+     * words, files are excluded based on their package and/or class name. If you want to exclude entire root
+     * directories, use the parameter <code>excludeRoots</code> instead.
+     *
+     * @parameter
+     */
+    private String[] excludes;
+
+    /**
+     * A list of files to include from checking. Can contain Ant-style wildcards and double wildcards.
+     * Defaults to **\/*.class.
+     *
+     * @parameter
+     */
+    private String[] includes;
+
+    /**
+     * Run Macker on the tests.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean includeTests;
 
     /**
      * Directory containing the rules files for Macker.
@@ -181,8 +222,16 @@ public class MackerMojo
         }
 
         // check if there are class files to analyze
-        String files[] = FileUtils.getFilesFromExtension( classesDirectory.getPath(), new String[] { "class" } );
-        if ( files == null || files.length == 0 )
+        List<File> files;
+        try
+        {
+            files = getFilesToProcess();
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error during Macker execution: error in file selection", e );
+        }
+        if ( files == null || files.size() == 0 )
         {
             // no class file, we can't do anything
             getLog().info( "No class files in specified directory " + classesDirectory );
@@ -211,7 +260,7 @@ public class MackerMojo
      * @throws MojoExecutionException if a error occurs during Macker execution
      * @throws MojoFailureException if Macker detects a failure.
      */
-    private void launchMacker( File outputFile, String[] files )
+    private void launchMacker( File outputFile, List<File> files )
         throws MojoExecutionException, MojoFailureException
     {
         try
@@ -259,12 +308,12 @@ public class MackerMojo
      * @throws IOException if there's a problem reading a file
      * @throws ClassParseException if there's a problem parsing a class
      */
-    private void specifyClassFilesToAnalyse( String[] files, Macker macker )
+    private void specifyClassFilesToAnalyse( List<File> files, Macker macker )
         throws IOException, ClassParseException
     {
-        for ( int i = 0; i < files.length; i++ )
+        for ( File file : files )
         {
-            macker.addClass( new File( files[i] ) );
+            macker.addClass( file );
         }
     }
 
@@ -340,4 +389,75 @@ public class MackerMojo
     {
         return project;
     }
+
+    /**
+     * Convenience method to get the list of files where the PMD tool will be executed
+     *
+     * @return a List of the files where the MACKER tool will be executed
+     */
+    @SuppressWarnings("unchecked")
+    private List<File> getFilesToProcess()
+        throws IOException
+    {
+        List<File> directories = new ArrayList<File>();
+        directories.add( classesDirectory );
+        if ( includeTests )
+        {
+            directories.add( testClassesDirectory );
+        }
+
+        String excluding = getExcludes();
+        getLog().debug( "Exclusions: " + excluding );
+        String including = getIncludes();
+        getLog().debug( "Inclusions: " + including );
+
+        List<File> files = new LinkedList<File>();
+
+        for ( File sourceDirectory : directories )
+        {
+            if ( sourceDirectory.isDirectory() )
+            {
+                List<File> newfiles = FileUtils.getFiles( sourceDirectory, including, excluding );
+                files.addAll( newfiles );
+            }
+        }
+
+        return files;
+    }
+
+    /**
+     * Gets the comma separated list of effective include patterns.
+     *
+     * @return The comma separated list of effective include patterns, never <code>null</code>.
+     */
+    private String getIncludes()
+    {
+        Collection<String> patterns = new LinkedHashSet<String>();
+        if ( includes != null )
+        {
+            patterns.addAll( Arrays.asList( includes ) );
+        }
+        if ( patterns.isEmpty() )
+        {
+            patterns.add( "**/*.class" );
+        }
+        return StringUtils.join( patterns.iterator(), "," );
+    }
+
+    /**
+     * Gets the comma separated list of effective exclude patterns.
+     *
+     * @return The comma separated list of effective exclude patterns, never <code>null</code>.
+     */
+    @SuppressWarnings("unchecked")
+    private String getExcludes()
+    {
+        Collection<String> patterns = new LinkedHashSet<String>( FileUtils.getDefaultExcludesAsList() );
+        if ( excludes != null )
+        {
+            patterns.addAll( Arrays.asList( excludes ) );
+        }
+        return StringUtils.join( patterns.iterator(), "," );
+    }
+
 }

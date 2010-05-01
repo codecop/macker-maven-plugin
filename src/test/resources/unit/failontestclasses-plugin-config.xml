@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>def.configuration</groupId>
+  <artifactId>default-configuration</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>Maven Macker Plugin Test</name>
+
+  <build>
+    <finalName>testclasses-configuration</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>macker-maven-plugin</artifactId>
+        <configuration>
+          <classesDirectory>target/test/unit/target/classes</classesDirectory>
+          <testClassesDirectory>target/test/unit/target/test-classes</testClassesDirectory>
+          <rulesDirectory>src/test/resources/unit/testclasses-configuration</rulesDirectory>
+          <outputDirectory>target/test/unit/target</outputDirectory>
+          <outputName>macker-out-violations.xml</outputName>
+          <rule>macker-rules-testclasses.xml</rule>
+          <failOnError>true</failOnError>
+          <includeTests>true</includeTests>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
