@@ -4,8 +4,13 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
+import java.io.FileReader;
+import java.util.List;
 
 import org.codehaus.plexus.util.FileUtils;
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.Difference;
 
 public class MackerMojoTest extends AbstractMojoTestCase
 {
@@ -37,6 +42,7 @@ public class MackerMojoTest extends AbstractMojoTestCase
         assertTrue( "macker-out.xml is empty", generatedFile.length() > 0 );
     }
 
+    @SuppressWarnings("unchecked")
     public void testNotFailOnViolation() throws Exception
     {
         File testPom = new File( getBasedir(), "src/test/resources/unit/notfailonviolation-plugin-config.xml" );
@@ -45,7 +51,16 @@ public class MackerMojoTest extends AbstractMojoTestCase
 
         File generatedFile = new File( getBasedir(), "target/test/unit/target/macker-out-violations.xml" );
         assertTrue( "macker-out-violations was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-        // TODO assert XML
+
+        // assert XML "macker-out-violations.xml"
+        Diff xmlDiff = new Diff( new FileReader(
+                "src/test/resources/unit/violation-configuration/macker-out-violations.xml" ), new FileReader(
+                generatedFile ) );
+        DetailedDiff detailedDiff = new DetailedDiff( xmlDiff );
+        List<Difference> differences = detailedDiff.getAllDifferences();
+        assertEquals( 1, differences.size() );
+        Difference diff = differences.get( 0 ); // timestamp
+        assertEquals( "Sun Apr 25 01:23:20 CEST 2010", diff.getControlNodeDetail().getValue() );
     }
 
     public void testFailOnViolation() throws Exception
