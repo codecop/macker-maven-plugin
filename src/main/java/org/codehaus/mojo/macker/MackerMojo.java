@@ -140,6 +140,14 @@ public class MackerMojo
     private boolean failOnError;
 
     /**
+     * Skip the checks.  Most useful on the command line
+     * via "-Dmacker.skip=true".
+     *
+     * @parameter expression="${macker.skip}" default-value="false"
+     */
+    private boolean skip;
+
+    /**
      * <i>Maven Internal</i>: Project to interact with.
      *
      * @parameter expression="${project}"
@@ -155,6 +163,11 @@ public class MackerMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( skip )
+        {
+            return;
+        }
+
         // check if rules were specified
         if ( null == rules || 0 == rules.length )
         {
