@@ -20,7 +20,6 @@ public class MackerMojoTest extends AbstractMojoTestCase
     private static final String TEST_POM_LOCATION = "src/test/resources/unit/";
     private static final String DEFAULT_DATE = "Sun Apr 25 01:23:20 CEST 2010";
 
-    @Override
     protected void setUp() throws Exception
     {
         super.setUp();
@@ -68,14 +67,13 @@ public class MackerMojoTest extends AbstractMojoTestCase
         assertOutput( "violation-configuration/macker-out-violations.xml", generatedFile );
     }
 
-    @SuppressWarnings("unchecked")
     private void assertOutput( String controlFile, File generatedFile ) throws SAXException, IOException
     {
         Diff xmlDiff = new Diff( new FileReader( TEST_POM_LOCATION + controlFile ), new FileReader( generatedFile ) );
         DetailedDiff detailedDiff = new DetailedDiff( xmlDiff );
-        List<Difference> differences = detailedDiff.getAllDifferences();
+        List/*<Difference>*/ differences = detailedDiff.getAllDifferences();
         assertEquals( 1, differences.size() );
-        Difference diff = differences.get( 0 ); // timestamp
+        Difference diff = (Difference) differences.get( 0 ); // timestamp
         assertEquals( DEFAULT_DATE, diff.getControlNodeDetail().getValue() );
     }
 
