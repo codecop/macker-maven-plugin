@@ -61,6 +61,9 @@ Maven 2 Macker Plugin - How to Use
         <maxmsg>0</maxmsg>
         <print>error|warning|info|debug</print>
         <anger>error|warning|info|debug</anger>
+        <classesDirectory>target/classes</classesDirectory>
+        <testClassesDirectory>target/test-classes</testClassesDirectory>
+        <rulesDirectory>src/main/config</rulesDirectory>
         <rule>macker-rules.xml</rule>
         <verbose>true|false</verbose>
         <failOnError>true|false</failOnError>
