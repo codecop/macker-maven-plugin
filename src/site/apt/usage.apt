@@ -90,6 +90,31 @@ Maven 2 Macker Plugin - How to Use
 </build>
 -------------------
  
+*Using Rules
+
+ The Macker plugin supports more than one rule set. The rule sets may reside in the classpath, filesystem or at a URL. For rule sets that are bundled with the plugin, you do not need to specificy the absolute path of the file. It will be resolved by the plugin. But if the rule set is a custom rule set, you need to specify its absolute path. 
+
+-------------------
+<build>
+  <plugin>
+    <groupId>org.codehaus.mojo</groupId>
+      <artifactId>macker-maven-plugin</artifactId>
+      <configuration>
+        [...]
+        <rules>
+          <!-- A rule sets that is in the classpath -->
+          <rule>/rules/architecture.xml</rule>
+          <!-- Custom local file system rule set -->
+          <rule>d:\rules\layers.xml</rule>
+          <!-- Custom remote rule set accessed via a URL -->
+          <rule>http://localhost/design.xml</rule>
+        </rules>
+      </configuration>
+      </executions>
+  </plugin>
+</build>
+-------------------
+ 
 *Known Issues and Limitations
  
  As with similar plugins (Findbugs etc), when running Macker on a project, the default heap size might not be enough to complete the build. For now there is no way to fork Macker and run with it's own memory requirements, but the following system variable will allow you to do so for Maven:
