@@ -2,7 +2,7 @@
 
 <macker>
 
-  <ruleset name="unit test rules">
+  <ruleset name="failing rules">
 
     <var name="base" value="org.codehaus.mojo.macker" />
     <pattern name="example" class="${base}.example.**" />

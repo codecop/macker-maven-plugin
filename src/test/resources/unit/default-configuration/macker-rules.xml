@@ -2,7 +2,7 @@
 
 <macker>
 
-  <ruleset name="unit test rules">
+  <ruleset name="default rules">
 
     <access-rule>
       <message>JD xml classes must not be used directly (only indirectly by XLST).</message>
