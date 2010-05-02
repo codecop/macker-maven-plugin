@@ -42,6 +42,7 @@ public class MackerMojoTest extends AbstractMojoTestCase
 
     public void testDefaultConfiguration() throws Exception
     {
+        // POM configures a ruleset that does not fail on the given classes
         File testPom = new File( getBasedir(), TEST_POM_LOCATION + "default-configuration-plugin-config.xml" );
         MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
         assertNotNull( mojo );
@@ -55,6 +56,8 @@ public class MackerMojoTest extends AbstractMojoTestCase
 
     public void testNotFailOnViolation() throws Exception
     {
+        // POM configures a ruleset that fails on the given classes
+        // but failOnError is false
         File testPom = new File( getBasedir(), TEST_POM_LOCATION + "notfailonviolation-plugin-config.xml" );
         MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
         mojo.execute();
@@ -78,6 +81,7 @@ public class MackerMojoTest extends AbstractMojoTestCase
 
     public void testFailOnViolation() throws Exception
     {
+        // POM configures a ruleset that fails on the given classes
         File testPom = new File( getBasedir(), TEST_POM_LOCATION + "failonviolation-plugin-config.xml" );
         MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
         try
@@ -96,6 +100,8 @@ public class MackerMojoTest extends AbstractMojoTestCase
 
     public void testSkipped() throws Exception
     {
+        // POM configures a ruleset that fails on the given classes
+        // but the whole check is skipped
         File testPom = new File( getBasedir(), TEST_POM_LOCATION + "skip-plugin-config.xml" );
         MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
         mojo.execute();
@@ -107,6 +113,8 @@ public class MackerMojoTest extends AbstractMojoTestCase
 
     public void testNotFailInTestClasses() throws Exception
     {
+        // POM configures a ruleset that fails on the given test classes
+        // bit the test classes are not configured
         File testPom = new File( getBasedir(), TEST_POM_LOCATION + "notfailontestclasses-plugin-config.xml" );
         MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
         mojo.execute();
@@ -118,11 +126,11 @@ public class MackerMojoTest extends AbstractMojoTestCase
 
     public void testFailInTestClasses() throws Exception
     {
+        // POM configures a ruleset that fails on the given test classes
         File testPom = new File( getBasedir(), TEST_POM_LOCATION + "failontestclasses-plugin-config.xml" );
         MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
         try
         {
-            // fails due to violations in test classes
             mojo.execute();
             fail( "MojoFailureException should be thrown." );
         }
@@ -134,4 +142,17 @@ public class MackerMojoTest extends AbstractMojoTestCase
         }
     }
 
+    public void testExcludes() throws Exception
+    {
+        // POM configures a ruleset that fails on the given classes
+        // but the offending class is excluded
+        File testPom = new File( getBasedir(), TEST_POM_LOCATION + "excludefailonviolation-plugin-config.xml" );
+        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
+        mojo.execute();
+
+        //check if the output files were generated
+        File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out-violations.xml" );
+        assertTrue( "macker-out.xml was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+    }
 }
