@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <macker-report>
     <timestamp>Sun Apr 25 01:23:20 CEST 2010</timestamp>
-    <ruleset name="unit test rules">
+    <ruleset name="failing rules">
         <access-rule-violation severity="error">
             <message>java.security classes must only be used inside util.crypt packages.</message>
             <from>
