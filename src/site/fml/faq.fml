@@ -42,7 +42,7 @@
      <question>Can I run Macker on my test classes?</question>
      <answer>
        <p>
-         Yes, set the includeTests parameter to true.
+         Yes, set the <code>includeTests</code> parameter to <code>true</code>.
        </p>
      </answer>
    </faq>
