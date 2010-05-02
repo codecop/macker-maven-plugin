@@ -47,7 +47,6 @@ import net.innig.macker.structure.ClassParseException;
  * Runs Macker against the compiled classes of the project.
  *
  * @goal macker
- * @description Executes Macker against the classes.
  * @execute phase="compile"
  * @requiresDependencyResolution compile
  * @requiresProject
@@ -164,7 +163,7 @@ public class MackerMojo
      *
      * @parameter expression="${variables}"
      */
-    private Map<String, String> variables = new HashMap<String, String>();
+    private Map/*<String, String>*/ variables = new HashMap/*<String, String>*/();
 
     /**
      * Verbose setting for Macker tool execution.
@@ -198,7 +197,8 @@ public class MackerMojo
     private MavenProject project;
 
     /**
-     * @throws MojoExecutionException
+     * @throws MojoExecutionException if a error occurs during Macker execution
+     * @throws MojoFailureException if Macker detects a failure.
      * @see org.apache.maven.plugin.Mojo#execute()
      */
     public void execute()
@@ -214,6 +214,7 @@ public class MackerMojo
         {
             rules = new String[1];
             rules[0] = rule;
+            // TODO use URLs, get from anywhere, also classpath
         }
 
         if ( !classesDirectory.isDirectory() )
@@ -222,7 +223,7 @@ public class MackerMojo
         }
 
         // check if there are class files to analyze
-        List<File> files;
+        List/*<File>*/ files;
         try
         {
             files = getFilesToProcess();
@@ -260,7 +261,7 @@ public class MackerMojo
      * @throws MojoExecutionException if a error occurs during Macker execution
      * @throws MojoFailureException if Macker detects a failure.
      */
-    private void launchMacker( File outputFile, List<File> files )
+    private void launchMacker( File outputFile, List/*<File>*/ files )
         throws MojoExecutionException, MojoFailureException
     {
         try
@@ -308,12 +309,12 @@ public class MackerMojo
      * @throws IOException if there's a problem reading a file
      * @throws ClassParseException if there's a problem parsing a class
      */
-    private void specifyClassFilesToAnalyse( List<File> files, Macker macker )
+    private void specifyClassFilesToAnalyse( List/*<File>*/ files, Macker macker )
         throws IOException, ClassParseException
     {
-        for ( File file : files )
+        for ( Iterator/*<File>*/ i = files.iterator(); i.hasNext(); )
         {
-            macker.addClass( file );
+            macker.addClass( (File) i.next() );
         }
     }
 
@@ -326,11 +327,11 @@ public class MackerMojo
     {
         if ( variables != null && variables.size() > 0 )
         {
-            Iterator<String> it = variables.keySet().iterator();
+            Iterator/*<String>*/ it = variables.keySet().iterator();
             while ( it.hasNext() )
             {
-                String key = it.next();
-                macker.setVariable( key, variables.get( key ) );
+                String key = (String) it.next();
+                macker.setVariable( key, (String) variables.get( key ) );
             }
         }
     }
@@ -394,12 +395,12 @@ public class MackerMojo
      * Convenience method to get the list of files where the PMD tool will be executed
      *
      * @return a List of the files where the MACKER tool will be executed
+     * @throws IOException if there's a problem scanning the directories
      */
-    @SuppressWarnings("unchecked")
-    private List<File> getFilesToProcess()
+    private List/*<File>*/ getFilesToProcess()
         throws IOException
     {
-        List<File> directories = new ArrayList<File>();
+        List/*<File>*/ directories = new ArrayList/*<File>*/();
         directories.add( classesDirectory );
         if ( includeTests )
         {
@@ -411,13 +412,14 @@ public class MackerMojo
         String including = getIncludes();
         getLog().debug( "Inclusions: " + including );
 
-        List<File> files = new LinkedList<File>();
+        List/*<File>*/ files = new LinkedList/*<File>*/();
 
-        for ( File sourceDirectory : directories )
+        for ( Iterator/*<File>*/ i = directories.iterator(); i.hasNext(); )
         {
+            File sourceDirectory = (File) i.next();
             if ( sourceDirectory.isDirectory() )
             {
-                List<File> newfiles = FileUtils.getFiles( sourceDirectory, including, excluding );
+                List/*<File>*/ newfiles = FileUtils.getFiles( sourceDirectory, including, excluding );
                 files.addAll( newfiles );
             }
         }
@@ -432,7 +434,7 @@ public class MackerMojo
      */
     private String getIncludes()
     {
-        Collection<String> patterns = new LinkedHashSet<String>();
+        Collection/*<String>*/ patterns = new LinkedHashSet/*<String>*/();
         if ( includes != null )
         {
             patterns.addAll( Arrays.asList( includes ) );
@@ -449,10 +451,9 @@ public class MackerMojo
      *
      * @return The comma separated list of effective exclude patterns, never <code>null</code>.
      */
-    @SuppressWarnings("unchecked")
     private String getExcludes()
     {
-        Collection<String> patterns = new LinkedHashSet<String>( FileUtils.getDefaultExcludesAsList() );
+        Collection/*<String>*/ patterns = new LinkedHashSet/*<String>*/( FileUtils.getDefaultExcludesAsList() );
         if ( excludes != null )
         {
             patterns.addAll( Arrays.asList( excludes ) );
