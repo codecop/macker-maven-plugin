@@ -78,6 +78,18 @@
       </roles>
       <timezone>+1</timezone>
     </contributor>
+    <contributor>
+      <name>dkulp</name>
+      <roles>
+        <role>Maven PMD Plugin Developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Benjamin Bentmann</name>
+      <roles>
+        <role>Maven PMD Plugin Developer</role>
+      </roles>
+    </contributor>
   </contributors>
   <licenses>
     <license>
