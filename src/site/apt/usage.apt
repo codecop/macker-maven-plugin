@@ -63,10 +63,16 @@ Maven 2 Macker Plugin - How to Use
         <anger>error|warning|info|debug</anger>
         <rule>macker-rules.xml</rule>
         <verbose>true|false</verbose>
+        <failOnError>true|false</failOnError>
+        <includeTests>true|false</includeTests>
         <variables>
           <key1>value1</key1>
           [...]
         </variables>
+        <excludes>
+          <exclude>**/*Bean.class</exclude>
+          <exclude>**/generated/*.class</exclude>
+        </excludes>
       </configuration>
       <executions>
         <execution>

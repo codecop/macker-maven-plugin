@@ -9,19 +9,17 @@
   <name>Maven Macker Plugin Test</name>
 
   <build>
-    <finalName>default-configuration</finalName>
+    <finalName>violation-configuration</finalName>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>macker-maven-plugin</artifactId>
         <configuration>
-          <classesDirectory>target/test/unit/target/classes</classesDirectory><!-- ${project.build.outputDirectory} -->
-          <rulesDirectory>src/test/resources/unit/violation-configuration</rulesDirectory><!-- ${basedir}/src/main/config -->
-          <outputDirectory>target/test/unit/target</outputDirectory><!-- ${project.build.directory} -->
+          <classesDirectory>target/test/unit/target/classes</classesDirectory>
+          <rulesDirectory>src/test/resources/unit/violation-configuration</rulesDirectory>
+          <outputDirectory>target/test/unit/target</outputDirectory>
           <outputName>macker-out-violations.xml</outputName>
-          <maxmsg>0</maxmsg>
           <rule>macker-rules-violations.xml</rule>
-          <verbose>false</verbose>
           <failOnError>true</failOnError>
         </configuration>
       </plugin>

@@ -42,9 +42,20 @@
      <question>Can I run Macker on my test classes?</question>
      <answer>
        <p>
-         No, Macker is not designed for that purpose.
+         Yes, set the includeTests parameter to true.
        </p>
      </answer>
+   </faq>
+   <faq id="skip">
+     <question>
+        Is there any way to skip the Macker check temporarily?
+     </question>
+     <answer>
+        <p>
+          Yes, it supports a skip parameter which you can pass on the
+          command line, <code>-Dmacker.skip=true</code>.
+        </p>
+    </answer>
    </faq>
  </part>
 </faqs>

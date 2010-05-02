@@ -22,7 +22,6 @@
           <outputName>macker-out.xml</outputName>
           <rule>macker-rules-testclasses.xml</rule>
           <failOnError>true</failOnError>
-          <includeTests>false</includeTests>
         </configuration>
       </plugin>
     </plugins>
