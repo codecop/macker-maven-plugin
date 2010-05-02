@@ -15,6 +15,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>macker-maven-plugin</artifactId>
         <configuration>
+          <project implementation="org.codehaus.mojo.macker.stubs.ProjectStub" />
           <classesDirectory>target/test/unit/target/classes</classesDirectory><!-- ${project.build.outputDirectory} -->
           <rulesDirectory>src/test/resources/unit/default-configuration</rulesDirectory><!-- ${basedir}/src/main/config -->
           <outputDirectory>target/test/unit/target</outputDirectory><!-- ${project.build.directory} -->

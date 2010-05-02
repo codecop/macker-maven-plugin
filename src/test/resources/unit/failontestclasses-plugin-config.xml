@@ -15,11 +15,12 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>macker-maven-plugin</artifactId>
         <configuration>
+          <project implementation="org.codehaus.mojo.macker.stubs.ProjectStub" />
           <classesDirectory>target/test/unit/target/classes</classesDirectory>
           <testClassesDirectory>target/test/unit/target/test-classes</testClassesDirectory>
           <rulesDirectory>src/test/resources/unit/testclasses-configuration</rulesDirectory>
           <outputDirectory>target/test/unit/target</outputDirectory>
-          <outputName>macker-out-violations.xml</outputName>
+          <outputName>macker-out.xml</outputName>
           <rule>macker-rules-testclasses.xml</rule>
           <failOnError>true</failOnError>
           <includeTests>true</includeTests>
