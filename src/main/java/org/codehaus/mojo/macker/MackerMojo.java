@@ -33,6 +33,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.plexus.resource.ResourceManager;
+import org.codehaus.plexus.resource.loader.FileResourceCreationException;
+import org.codehaus.plexus.resource.loader.FileResourceLoader;
+import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -159,6 +163,13 @@ public class MackerMojo
     private String[] rules;
 
     /**
+     * @component
+     * @required
+     * @readonly
+     */
+    private ResourceManager locator;
+
+    /**
      * Variables map that will be passed to Macker.
      *
      * @parameter expression="${variables}"
@@ -204,6 +215,11 @@ public class MackerMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        //configure ResourceManager
+        locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
+        locator.addSearchPath( "url", "" );
+        locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
+
         if ( skip )
         {
             return;
@@ -212,14 +228,24 @@ public class MackerMojo
         // check if rules were specified
         if ( null == rules || 0 == rules.length )
         {
+            if ( null == rule )
+            {
+               throw new MojoExecutionException( "Error during Macker execution: no rule file defined" );
+            }
             rules = new String[1];
             rules[0] = rule;
-            // TODO use URLs, get from anywhere, also classpath
         }
-
         if ( !classesDirectory.isDirectory() )
         {
            throw new MojoExecutionException( "Error during Macker execution: " + classesDirectory.getAbsolutePath() + " is not a directory" );
+        }
+        if ( includeTests && !testClassesDirectory.isDirectory() )
+        {
+           throw new MojoExecutionException( "Error during Macker execution: " + testClassesDirectory.getAbsolutePath() + " is not a directory" );
+        }
+        if ( !rulesDirectory.isDirectory() )
+        {
+           throw new MojoExecutionException( "Error during Macker execution: " + rulesDirectory.getAbsolutePath() + " is not a directory" );
         }
 
         // check if there are class files to analyze
@@ -280,7 +306,7 @@ public class MackerMojo
             getLog().warn( "Macker has detected violations. Please refer to the XML report for more information." );
             if ( failOnError )
             {
-                throw new MojoFailureException( "MackerIsMadException during Macker execution.", ex );
+                throw new MojoFailureException( "MackerIsMadException during Macker execution: " + ex.getMessage() );
             }
         }
         catch ( RulesException ex )
@@ -342,17 +368,63 @@ public class MackerMojo
      * @param macker the Macker instance
      * @throws IOException if there's a problem reading a file
      * @throws RulesException if there's a problem parsing a rule file
+     * @throws MojoExecutionException if a error occurs during Macker execution
      */
     private void configureRules( Macker macker )
-        throws IOException, RulesException
+        throws IOException, RulesException, MojoExecutionException
     {
-        File ruleFile = null;
-        for ( int i = 0; i < rules.length; i++ )
+        try
         {
-            getLog().debug( "Add rules file: " + rulesDirectory + File.separator + rules[i] );
-            ruleFile = new File( rulesDirectory, rules[i] );
-            macker.addRulesFile( ruleFile );
+            for ( int i = 0; i < rules.length; i++ )
+            {
+                String set = rules[i];
+                File ruleFile = new File( rulesDirectory, set );
+                if ( ruleFile.exists() )
+                {
+                    getLog().debug( "Add rules file: " + rulesDirectory + File.separator + rules[i] );
+                }
+                else
+                {
+                    getLog().debug( "Preparing ruleset: " + set );
+                    ruleFile = locator.getResourceAsFile( set, getLocationTemp( set ) );
+
+                    if ( null == ruleFile )
+                    {
+                        throw new MojoExecutionException( "Could not resolve " + set );
+                    }
+                }
+                macker.addRulesFile( ruleFile );
+            }
         }
+        catch ( ResourceNotFoundException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+        catch ( FileResourceCreationException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+    }
+
+    /**
+     * Convenience method to get the location of the specified file name.
+     *
+     * @param name the name of the file whose location is to be resolved
+     * @return a String that contains the absolute file name of the file
+     */
+    private String getLocationTemp( String name )
+    {
+        String loc = name;
+        if ( loc.indexOf( '/' ) != -1 )
+        {
+            loc = loc.substring( loc.lastIndexOf( '/' ) + 1 );
+        }
+        if ( loc.indexOf( '\\' ) != -1 )
+        {
+            loc = loc.substring( loc.lastIndexOf( '\\' ) + 1 );
+        }
+        getLog().debug( "Before: " + name + " After: " + loc );
+        return loc;
     }
 
     /**
@@ -459,6 +531,11 @@ public class MackerMojo
             patterns.addAll( Arrays.asList( excludes ) );
         }
         return StringUtils.join( patterns.iterator(), "," );
+    }
+
+    public void setRules( String[] ruleSets )
+    {
+        rules = ruleSets;
     }
 
 }
