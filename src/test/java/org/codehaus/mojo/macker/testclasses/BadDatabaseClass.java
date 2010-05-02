@@ -2,10 +2,10 @@ package org.codehaus.mojo.macker.testclasses;
 
 import java.sql.SQLException;
 
-public class BadDatabaseTest
+public class BadDatabaseClass
 {
 
-    public void testDatabase() throws SQLException
+    public void workOnDatabase() throws SQLException
     {
         throw new SQLException( "dummy" );
     }
