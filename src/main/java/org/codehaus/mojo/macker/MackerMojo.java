@@ -230,26 +230,26 @@ public class MackerMojo
         {
             if ( null == rule )
             {
-               throw new MojoExecutionException( "Error during Macker execution: no rule file defined" );
+                throw new MojoExecutionException( "Error during Macker execution: no rule file defined" );
             }
             rules = new String[1];
             rules[0] = rule;
         }
-        if ( classesDirectory==null || !classesDirectory.isDirectory() )
+        if ( classesDirectory == null || !classesDirectory.isDirectory() )
         {
-           throw new MojoExecutionException( "Error during Macker execution: " + classesDirectory.getAbsolutePath() + " is not a directory" );
+            throw new MojoExecutionException( "Error during Macker execution: " + classesDirectory.getAbsolutePath() + " is not a directory" );
         }
         if ( includeTests && (testClassesDirectory == null || !testClassesDirectory.isDirectory()) )
         {
-           throw new MojoExecutionException( "Error during Macker execution: " + testClassesDirectory.getAbsolutePath() + " is not a directory" );
+            throw new MojoExecutionException( "Error during Macker execution: " + testClassesDirectory.getAbsolutePath() + " is not a directory" );
         }
         if ( rulesDirectory != null && !rulesDirectory.isDirectory() )
         {
-           throw new MojoExecutionException( "Error during Macker execution: " + rulesDirectory.getAbsolutePath() + " is not a directory" );
+            throw new MojoExecutionException( "Error during Macker execution: " + rulesDirectory.getAbsolutePath() + " is not a directory" );
         }
 
         // check if there are class files to analyze
-        List/*<File>*/ files;
+        List/*<File>*/files;
         try
         {
             files = getFilesToProcess();
@@ -267,10 +267,10 @@ public class MackerMojo
         {
             if ( !outputDirectory.exists() )
             {
-               if ( !outputDirectory.mkdirs() )
-               {
-                  throw new MojoExecutionException( "Error during Macker execution: Could not create directory " + outputDirectory.getAbsolutePath() );
-               }
+                if ( !outputDirectory.mkdirs() )
+                {
+                    throw new MojoExecutionException( "Error during Macker execution: Could not create directory " + outputDirectory.getAbsolutePath() );
+                }
             }
 
             // let's go!
