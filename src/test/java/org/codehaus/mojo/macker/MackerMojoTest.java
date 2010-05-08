@@ -195,4 +195,24 @@ public class MackerMojoTest extends AbstractMojoTestCase
         assertTrue( "macker-out.xml was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
     }
 
+    public void testClasspathRules() throws Exception
+    {
+        // POM configures a rulesets from classpath that fails on the given classes
+        File testPom = copyPom( "classpath-configuration-plugin-config.xml" );
+        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
+        try
+        {
+            mojo.execute();
+            fail( "MojoFailureException should be thrown." );
+        }
+        catch ( MojoFailureException e )
+        {
+            // assert XML "macker-out.xml"
+            File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
+            assertTrue( "macker-out was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+            assertOutput( "violation-configuration/macker-out.xml", generatedFile );
+        }
+    }
+
+
 }

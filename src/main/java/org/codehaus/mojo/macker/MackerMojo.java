@@ -235,15 +235,15 @@ public class MackerMojo
             rules = new String[1];
             rules[0] = rule;
         }
-        if ( !classesDirectory.isDirectory() )
+        if ( classesDirectory==null || !classesDirectory.isDirectory() )
         {
            throw new MojoExecutionException( "Error during Macker execution: " + classesDirectory.getAbsolutePath() + " is not a directory" );
         }
-        if ( includeTests && !testClassesDirectory.isDirectory() )
+        if ( includeTests && (testClassesDirectory == null || !testClassesDirectory.isDirectory()) )
         {
            throw new MojoExecutionException( "Error during Macker execution: " + testClassesDirectory.getAbsolutePath() + " is not a directory" );
         }
-        if ( !rulesDirectory.isDirectory() )
+        if ( rulesDirectory != null && !rulesDirectory.isDirectory() )
         {
            throw new MojoExecutionException( "Error during Macker execution: " + rulesDirectory.getAbsolutePath() + " is not a directory" );
         }
