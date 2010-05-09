@@ -20,18 +20,15 @@
           <classesDirectory>target/test/unit/target/classes</classesDirectory>
           <testClassesDirectory>target/test/unit/target/test-classes</testClassesDirectory>
           <includeTests>false</includeTests>
+          <rulesDirectory>src/main/config</rulesDirectory>
           <outputDirectory>target/test/unit/target</outputDirectory>
           <outputName>macker-out.xml</outputName>
           <maxmsg>0</maxmsg>
+          <rule>macker-rules.xml</rule>
           <verbose>false</verbose>
           <failOnError>true</failOnError>
           <skip>false</skip>
           <!-- END default values set by Maven mechanism -->
-          <rulesDirectory>src/test/resources/unit/violation-configuration</rulesDirectory>
-          <rule>macker-rules-violations.xml</rule>
-          <excludes>
-            <exclude>**/*ForbiddenReference.class</exclude>
-          </excludes>
         </configuration>
       </plugin>
     </plugins>
