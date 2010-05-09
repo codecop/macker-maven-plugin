@@ -1,8 +1,6 @@
 package org.codehaus.mojo.macker;
 
 /*
- * Copyright 2007 Wayne Fay. Created August 16, 2007.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -174,7 +172,7 @@ public class MackerMojo
      *
      * @parameter expression="${variables}"
      */
-    private Map/*<String, String>*/ variables = new HashMap/*<String, String>*/();
+    private Map/*<String, String>*/variables = new HashMap/*<String, String>*/();
 
     /**
      * Verbose setting for Macker tool execution.
@@ -228,24 +226,12 @@ public class MackerMojo
         // check if rules were specified
         if ( null == rules || 0 == rules.length )
         {
-            if ( null == rule )
-            {
-                throw new MojoExecutionException( "Error during Macker execution: no rule file defined" );
-            }
-            rules = new String[1];
+            rules = new String[1]; // at least the default name
             rules[0] = rule;
         }
         if ( classesDirectory == null || !classesDirectory.isDirectory() )
         {
             throw new MojoExecutionException( "Error during Macker execution: " + classesDirectory.getAbsolutePath() + " is not a directory" );
-        }
-        if ( includeTests && (testClassesDirectory == null || !testClassesDirectory.isDirectory()) )
-        {
-            throw new MojoExecutionException( "Error during Macker execution: " + testClassesDirectory.getAbsolutePath() + " is not a directory" );
-        }
-        if ( rulesDirectory != null && !rulesDirectory.isDirectory() )
-        {
-            throw new MojoExecutionException( "Error during Macker execution: " + rulesDirectory.getAbsolutePath() + " is not a directory" );
         }
 
         // check if there are class files to analyze
@@ -261,7 +247,14 @@ public class MackerMojo
         if ( files == null || files.size() == 0 )
         {
             // no class file, we can't do anything
-            getLog().info( "No class files in specified directory " + classesDirectory );
+            if ( includeTests )
+            {
+                getLog().info( "No class files in specified directories: " + classesDirectory + ", " + testClassesDirectory );
+            }
+            else
+            {
+                getLog().info( "No class files in specified directory: " + classesDirectory );
+            }
         }
         else
         {
@@ -287,7 +280,7 @@ public class MackerMojo
      * @throws MojoExecutionException if a error occurs during Macker execution
      * @throws MojoFailureException if Macker detects a failure.
      */
-    private void launchMacker( File outputFile, List/*<File>*/ files )
+    private void launchMacker( File outputFile, List/*<File>*/files )
         throws MojoExecutionException, MojoFailureException
     {
         try
@@ -335,10 +328,10 @@ public class MackerMojo
      * @throws IOException if there's a problem reading a file
      * @throws ClassParseException if there's a problem parsing a class
      */
-    private void specifyClassFilesToAnalyse( List/*<File>*/ files, Macker macker )
+    private void specifyClassFilesToAnalyse( List/*<File>*/files, Macker macker )
         throws IOException, ClassParseException
     {
-        for ( Iterator/*<File>*/ i = files.iterator(); i.hasNext(); )
+        for ( Iterator/*<File>*/i = files.iterator(); i.hasNext(); )
         {
             macker.addClass( (File) i.next() );
         }
@@ -353,7 +346,7 @@ public class MackerMojo
     {
         if ( variables != null && variables.size() > 0 )
         {
-            Iterator/*<String>*/ it = variables.keySet().iterator();
+            Iterator/*<String>*/it = variables.keySet().iterator();
             while ( it.hasNext() )
             {
                 String key = (String) it.next();
@@ -390,7 +383,7 @@ public class MackerMojo
 
                     if ( null == ruleFile )
                     {
-                        throw new MojoExecutionException( "Could not resolve " + set );
+                        throw new MojoExecutionException( "Could not resolve rules file: " + set );
                     }
                 }
                 macker.addRulesFile( ruleFile );
@@ -469,14 +462,22 @@ public class MackerMojo
      * @return a List of the files where the MACKER tool will be executed
      * @throws IOException if there's a problem scanning the directories
      */
-    private List/*<File>*/ getFilesToProcess()
+    private List/*<File>*/getFilesToProcess()
         throws IOException
     {
-        List/*<File>*/ directories = new ArrayList/*<File>*/();
+        List/*<File>*/directories = new ArrayList/*<File>*/();
         directories.add( classesDirectory );
         if ( includeTests )
         {
-            directories.add( testClassesDirectory );
+            if ( testClassesDirectory != null && testClassesDirectory.isDirectory() )
+            {
+                directories.add( testClassesDirectory );
+            }
+            else
+            {
+                getLog().info( "No class files in test directory: " + testClassesDirectory );
+                // throw new MojoExecutionException( "Error during Macker execution: " + testClassesDirectory.getAbsolutePath() + " is not a directory" );
+            }
         }
 
         String excluding = getExcludes();
@@ -484,14 +485,14 @@ public class MackerMojo
         String including = getIncludes();
         getLog().debug( "Inclusions: " + including );
 
-        List/*<File>*/ files = new LinkedList/*<File>*/();
+        List/*<File>*/files = new LinkedList/*<File>*/();
 
-        for ( Iterator/*<File>*/ i = directories.iterator(); i.hasNext(); )
+        for ( Iterator/*<File>*/i = directories.iterator(); i.hasNext(); )
         {
             File sourceDirectory = (File) i.next();
             if ( sourceDirectory.isDirectory() )
             {
-                List/*<File>*/ newfiles = FileUtils.getFiles( sourceDirectory, including, excluding );
+                List/*<File>*/newfiles = FileUtils.getFiles( sourceDirectory, including, excluding );
                 files.addAll( newfiles );
             }
         }
@@ -506,7 +507,7 @@ public class MackerMojo
      */
     private String getIncludes()
     {
-        Collection/*<String>*/ patterns = new LinkedHashSet/*<String>*/();
+        Collection/*<String>*/patterns = new LinkedHashSet/*<String>*/();
         if ( includes != null )
         {
             patterns.addAll( Arrays.asList( includes ) );
@@ -525,7 +526,7 @@ public class MackerMojo
      */
     private String getExcludes()
     {
-        Collection/*<String>*/ patterns = new LinkedHashSet/*<String>*/( FileUtils.getDefaultExcludesAsList() );
+        Collection/*<String>*/patterns = new LinkedHashSet/*<String>*/( FileUtils.getDefaultExcludesAsList() );
         if ( excludes != null )
         {
             patterns.addAll( Arrays.asList( excludes ) );

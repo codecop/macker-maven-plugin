@@ -121,7 +121,7 @@ public class MackerMojoTest extends AbstractMojoTestCase
     public void testIgnoreTestClasses() throws Exception
     {
         // POM configures a ruleset that fails on the given test classes
-        // bit the test classes are not configured
+        // but the test classes are not configured zo execute
         File testPom = copyPom( "notfailontestclasses-plugin-config.xml" );
         MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
         mojo.execute();
@@ -147,6 +147,31 @@ public class MackerMojoTest extends AbstractMojoTestCase
             assertTrue( "macker-out was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
             assertOutput( "testclasses-configuration/macker-out.xml", generatedFile );
         }
+    }
+
+    public void testIgnoreMissingTestClassesWhenIncluded() throws Exception
+    {
+        // POM configures a include tests
+        // but test-classes folder is not there
+        File testPom = copyPom( "includetestswithoutclasses-configuration-plugin-config.xml" );
+        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
+        mojo.execute();
+
+        //check if the output files were generated
+        File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
+        assertTrue( "macker-out.xml was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+    }
+
+    public void testSingleRuleInList() throws Exception
+    {
+        // POM configures two rulesets that each fail on the given classes
+        File testPom = copyPom( "onerule-configuration-plugin-config.xml" );
+        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
+        mojo.execute();
+
+        //check if the output files were generated
+        File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
+        assertTrue( "macker-out.xml was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
     }
 
     public void testMultipleRules() throws Exception
@@ -213,6 +238,5 @@ public class MackerMojoTest extends AbstractMojoTestCase
             assertOutput( "violation-configuration/macker-out.xml", generatedFile );
         }
     }
-
 
 }

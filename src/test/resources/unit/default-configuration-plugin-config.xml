@@ -15,15 +15,20 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>macker-maven-plugin</artifactId>
         <configuration>
+          <!-- BEGIN default values set by Maven mechanism -->
           <project implementation="org.codehaus.mojo.macker.stubs.ProjectStub" />
-          <classesDirectory>target/test/unit/target/classes</classesDirectory><!-- ${project.build.outputDirectory} -->
-          <rulesDirectory>src/test/resources/unit/default-configuration</rulesDirectory><!-- ${basedir}/src/main/config -->
-          <outputDirectory>target/test/unit/target</outputDirectory><!-- ${project.build.directory} -->
+          <classesDirectory>target/test/unit/target/classes</classesDirectory>
+          <testClassesDirectory>target/test/unit/target/test-classes</testClassesDirectory>
+          <includeTests>false</includeTests>
+          <outputDirectory>target/test/unit/target</outputDirectory>
           <outputName>macker-out.xml</outputName>
           <maxmsg>0</maxmsg>
           <rule>macker-rules.xml</rule>
           <verbose>false</verbose>
           <failOnError>true</failOnError>
+          <skip>false</skip>
+          <!-- END default values set by Maven mechanism -->
+          <rulesDirectory>src/test/resources/unit/default-configuration</rulesDirectory>
         </configuration>
       </plugin>
     </plugins>

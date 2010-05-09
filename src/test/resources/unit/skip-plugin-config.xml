@@ -15,13 +15,19 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>macker-maven-plugin</artifactId>
         <configuration>
+          <!-- BEGIN default values set by Maven mechanism -->
           <project implementation="org.codehaus.mojo.macker.stubs.ProjectStub" />
           <classesDirectory>target/test/unit/target/classes</classesDirectory>
-          <rulesDirectory>src/test/resources/unit/violation-configuration</rulesDirectory>
+          <testClassesDirectory>target/test/unit/target/test-classes</testClassesDirectory>
+          <includeTests>false</includeTests>
           <outputDirectory>target/test/unit/target</outputDirectory>
           <outputName>macker-out.xml</outputName>
-          <rule>macker-rules-violations.xml</rule>
+          <maxmsg>0</maxmsg>
+          <verbose>false</verbose>
           <failOnError>true</failOnError>
+          <!-- END default values set by Maven mechanism -->
+          <rulesDirectory>src/test/resources/unit/violation-configuration</rulesDirectory>
+          <rule>macker-rules-violations.xml</rule>
           <skip>true</skip>
         </configuration>
       </plugin>
