@@ -229,10 +229,6 @@ public class MackerMojo
             rules = new String[1]; // at least the default name
             rules[0] = rule;
         }
-        if ( classesDirectory == null || !classesDirectory.isDirectory() )
-        {
-            throw new MojoExecutionException( "Error during Macker execution: " + classesDirectory.getAbsolutePath() + " is not a directory" );
-        }
 
         // check if there are class files to analyze
         List/*<File>*/files;
@@ -466,7 +462,11 @@ public class MackerMojo
         throws IOException
     {
         List/*<File>*/directories = new ArrayList/*<File>*/();
-        directories.add( classesDirectory );
+
+        if ( classesDirectory != null && classesDirectory.isDirectory() )
+        {
+            directories.add( classesDirectory );
+        }
         if ( includeTests )
         {
             if ( testClassesDirectory != null && testClassesDirectory.isDirectory() )
