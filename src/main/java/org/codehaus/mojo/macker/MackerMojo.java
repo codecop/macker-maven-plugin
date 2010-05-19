@@ -63,7 +63,6 @@ public class MackerMojo
      *
      * @parameter expression="${project.build.outputDirectory}"
      * @required
-     * @readonly
      */
     private File classesDirectory;
 
@@ -72,7 +71,6 @@ public class MackerMojo
      *
      * @parameter expression="${project.build.testOutputDirectory}"
      * @required
-     * @readonly
      */
     private File testClassesDirectory;
 
