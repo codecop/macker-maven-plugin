@@ -1,5 +1,0 @@
-[DEFAULT]
-BASEURL=http://svn.apache.org/viewvc/maven/plugins/trunk/maven-pmd-plugin/
-[InternetShortcut]
-URL=http://svn.apache.org/viewvc/maven/plugins/trunk/maven-pmd-plugin/
-Modified=D08299FF34EACA01D3
