@@ -1,0 +1,8 @@
+[DEFAULT]
+BASEURL=http://jira.codehaus.org/browse/MOJO-1529
+[DOC_fancy_bigIframe]
+BASEURL=http://jira.codehaus.org/browse/MOJO-1529
+ORIGURL=javascript:false;
+[InternetShortcut]
+URL=http://jira.codehaus.org/browse/MOJO-1529
+Modified=502A9D2BFCEECA01F7
