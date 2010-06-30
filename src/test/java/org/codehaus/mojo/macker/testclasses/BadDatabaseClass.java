@@ -19,7 +19,8 @@ import java.sql.SQLException;
 public class BadDatabaseClass
 {
 
-    public void workOnDatabase() throws SQLException
+    public void workOnDatabase()
+        throws SQLException
     {
         throw new SQLException( "dummy" );
     }
