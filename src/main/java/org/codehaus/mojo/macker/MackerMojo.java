@@ -38,13 +38,6 @@ import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
-import net.innig.macker.Macker;
-import net.innig.macker.event.ListenerException;
-import net.innig.macker.event.MackerIsMadException;
-import net.innig.macker.rule.RuleSeverity;
-import net.innig.macker.rule.RulesException;
-import net.innig.macker.structure.ClassParseException;
-
 /**
  * Runs Macker against the compiled classes of the project.
  *
@@ -288,25 +281,13 @@ public class MackerMojo
             // if we're here, then everything went fine
             getLog().info( "Macker has not found any violation." );
         }
-        catch ( MackerIsMadException ex )
+        catch ( MojoFailureException ex )
         {
             getLog().warn( "Macker has detected violations. Please refer to the XML report for more information." );
             if ( failOnError )
             {
-                throw new MojoFailureException( "MackerIsMadException during Macker execution: " + ex.getMessage() );
+                throw ex;
             }
-        }
-        catch ( RulesException ex )
-        {
-            throw new MojoExecutionException( "Macker rules are not properly defined: " + ex.getMessage(), ex );
-        }
-        catch ( ListenerException ex )
-        {
-            throw new MojoExecutionException( "Error during Macker execution: " + ex.getMessage(), ex );
-        }
-        catch ( ClassParseException ex )
-        {
-            throw new MojoExecutionException( "Error during Macker execution: " + ex.getMessage(), ex );
         }
         catch ( IOException ex )
         {
@@ -320,10 +301,10 @@ public class MackerMojo
      * @param files the ".class" files to analyze
      * @param macker the Macker instance
      * @throws IOException if there's a problem reading a file
-     * @throws ClassParseException if there's a problem parsing a class
+     * @throws MojoExecutionException if there's a problem parsing a class
      */
     private void specifyClassFilesToAnalyse( List/*<File>*/files, Macker macker )
-        throws IOException, ClassParseException
+        throws IOException, MojoExecutionException
     {
         for ( Iterator/*<File>*/i = files.iterator(); i.hasNext(); )
         {
@@ -354,11 +335,10 @@ public class MackerMojo
      *
      * @param macker the Macker instance
      * @throws IOException if there's a problem reading a file
-     * @throws RulesException if there's a problem parsing a rule file
-     * @throws MojoExecutionException if a error occurs during Macker execution
+     * @throws MojoExecutionException if there's a problem parsing a rule file
      */
     private void configureRules( Macker macker )
-        throws IOException, RulesException, MojoExecutionException
+        throws IOException, MojoExecutionException
     {
         try
         {
@@ -422,7 +402,8 @@ public class MackerMojo
      */
     private Macker createMacker( File outputFile )
     {
-        Macker macker = new net.innig.macker.Macker();
+        // Macker macker = new net.innig.macker.Macker();
+        Macker macker = new LinkedMacker();
         macker.setVerbose( verbose );
         macker.setXmlReportFile( outputFile );
         if ( maxmsg > 0 )
@@ -431,11 +412,11 @@ public class MackerMojo
         }
         if ( print != null )
         {
-            macker.setPrintThreshold( RuleSeverity.fromName( print ) );
+            macker.setPrintThreshold( print );
         }
         if ( anger != null )
         {
-            macker.setAngerThreshold( RuleSeverity.fromName( anger ) );
+            macker.setAngerThreshold( anger );
         }
         return macker;
     }
