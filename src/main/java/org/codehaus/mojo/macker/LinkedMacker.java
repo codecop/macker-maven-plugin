@@ -29,13 +29,11 @@ import net.innig.macker.structure.ClassParseException;
 /**
  * Delegator to the Macker tool.
  */
-public class LinkedMacker
-    implements Macker
+public class LinkedMacker implements Macker
 {
     private final net.innig.macker.Macker macker = new net.innig.macker.Macker();
 
-    public void addClass( File clazz )
-        throws IOException, MojoExecutionException
+    public void addClass( File clazz ) throws IOException, MojoExecutionException
     {
         try
         {
@@ -47,8 +45,7 @@ public class LinkedMacker
         }
     }
 
-    public void addRulesFile( File rule )
-        throws IOException, MojoExecutionException
+    public void addRulesFile( File rule ) throws IOException, MojoExecutionException
     {
         try
         {
@@ -60,8 +57,7 @@ public class LinkedMacker
         }
     }
 
-    public void check()
-        throws MojoExecutionException, MojoFailureException
+    public void check() throws MojoExecutionException, MojoFailureException
     {
         try
         {

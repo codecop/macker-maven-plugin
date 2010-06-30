@@ -31,19 +31,16 @@ public interface Macker
      * @throws IOException if there's a problem reading a file
      * @throws MojoExecutionException if there's a problem parsing a class
      */
-    void addClass( File clazz )
-        throws IOException, MojoExecutionException;
+    void addClass( File clazz ) throws IOException, MojoExecutionException;
 
     /**
      * Add a rule file to be used by Macker.
      * @throws IOException if there's a problem reading a file
      * @throws MojoExecutionException if there's a problem parsing a rule file
      */
-    void addRulesFile( File rule )
-        throws IOException, MojoExecutionException;
+    void addRulesFile( File rule ) throws IOException, MojoExecutionException;
 
-    void check()
-        throws MojoExecutionException, MojoFailureException;
+    void check() throws MojoExecutionException, MojoFailureException;
 
     void setAngerThreshold( String anger );
 
