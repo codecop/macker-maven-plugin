@@ -19,7 +19,8 @@ import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 import java.io.File;
 
-public class ProjectStub extends MavenProjectStub
+public class ProjectStub
+    extends MavenProjectStub
 {
     private static final String TEST_PROJECT = "target/test/unit";
     private static final String TEST_TARGET = TEST_PROJECT + "/target/";

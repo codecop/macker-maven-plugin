@@ -18,7 +18,8 @@ import java.security.InvalidParameterException;
 
 public class ForbiddenReference
 {
-    public void calculate() throws InvalidParameterException
+    public void calculate()
+        throws InvalidParameterException
     {
         throw new InvalidParameterException( "what a bad guy" );
     }
