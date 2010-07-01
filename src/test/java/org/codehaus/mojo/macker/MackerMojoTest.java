@@ -14,22 +14,22 @@ package org.codehaus.mojo.macker;
  * limitations under the License.
  */
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 
 import org.codehaus.plexus.util.FileUtils;
-import org.custommonkey.xmlunit.DetailedDiff;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.Difference;
-import org.xml.sax.SAXException;
+//import org.custommonkey.xmlunit.DetailedDiff;
+//import org.custommonkey.xmlunit.Diff;
+//import org.custommonkey.xmlunit.Difference;
+//import org.xml.sax.SAXException;
 
-public class MackerMojoTest extends AbstractMojoTestCase
+public class MackerMojoTest
+    extends AbstractMojoTestCase
 {
     private static final String TEST_PROJECT = "target/test/unit";
     private static final String TEST_TARGET = TEST_PROJECT + "/target/";
@@ -90,15 +90,44 @@ public class MackerMojoTest extends AbstractMojoTestCase
         assertOutput( "violation-configuration/macker-out.xml", generatedFile );
     }
 
-    private void assertOutput( String controlFile, File generatedFile ) throws SAXException, IOException
+    public void testNotFailOnViolationButBroken() throws Exception
     {
-        Diff xmlDiff = new Diff( new FileReader( TEST_POM_LOCATION + controlFile ), new FileReader( generatedFile ) );
-        DetailedDiff detailedDiff = new DetailedDiff( xmlDiff );
-        List/*<Difference>*/differences = detailedDiff.getAllDifferences();
-        assertEquals( 1, differences.size() );
-        Difference diff = (Difference) differences.get( 0 ); // timestamp
-        assertEquals( DEFAULT_DATE, diff.getControlNodeDetail().getValue() );
+        // POM configures plugin with a wrong value
+        File testPom = copyPom( "broken-notfailon-plugin-config.xml" );
+        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
+        try
+        {
+            mojo.execute();
+            fail( "MojoExecutionException should be thrown." );
+        }
+        catch ( MojoExecutionException e )
+        {
+            File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
+            assertFalse( generatedFile.exists() );
+        }
     }
+
+    private String readCleanedXml(File name) throws IOException {
+        return org.apache.commons.io.FileUtils.readFileToString( name ).replaceAll("<timestamp>.*?</timestamp>", "" );
+    }
+
+    private void assertOutput( String controlName, File generatedFile ) throws IOException
+    {
+        File controlFile = new File( TEST_POM_LOCATION + controlName );
+        String controlText = readCleanedXml( controlFile );
+        String generatedText = readCleanedXml( generatedFile );
+        assertEquals(controlText, generatedText );
+    }
+
+//    private void assertOutput( String controlFile, File generatedFile ) throws SAXException, IOException
+//    {
+//        Diff xmlDiff = new Diff( new FileReader( TEST_POM_LOCATION + controlFile ), new FileReader( generatedFile ) );
+//        DetailedDiff detailedDiff = new DetailedDiff( xmlDiff );
+//        List/*<Difference>*/differences = detailedDiff.getAllDifferences();
+//        assertEquals( 1, differences.size() );
+//        Difference diff = (Difference) differences.get( 0 ); // timestamp
+//        assertEquals( DEFAULT_DATE, diff.getControlNodeDetail().getValue() );
+//    }
 
     public void testFailOnViolation() throws Exception
     {
@@ -116,6 +145,23 @@ public class MackerMojoTest extends AbstractMojoTestCase
             File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
             assertTrue( "macker-out was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
             assertOutput( "violation-configuration/macker-out.xml", generatedFile );
+        }
+    }
+
+    public void testFailOnBroken() throws Exception
+    {
+        // POM configures plugin with a wrong value
+        File testPom = copyPom( "broken-configuration-plugin-config.xml" );
+        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
+        try
+        {
+            mojo.execute();
+            fail( "MojoExecutionException should be thrown." );
+        }
+        catch ( MojoExecutionException e )
+        {
+            File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
+            assertFalse( generatedFile.exists() );
         }
     }
 
