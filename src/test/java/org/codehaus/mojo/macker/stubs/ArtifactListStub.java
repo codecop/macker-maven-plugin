@@ -14,10 +14,30 @@ package org.codehaus.mojo.macker.stubs;
  * limitations under the License.
  */
 
+import java.io.File;
 import java.util.ArrayList;
+
+// TODO search if there is a better way to stub the project.artifacts?
 
 public class ArtifactListStub
     extends ArrayList/*<Artifact>*/
 {
-
+    public ArtifactListStub()
+    {
+        String[] elements = System.getProperty( "java.class.path" ).split( File.pathSeparator );
+        for ( int i = 0; i < elements.length; i++ )
+        {
+            final String element = elements[i];
+            if ( element.endsWith( ".jar" ) )
+            {
+                add( new ArtifactStub()
+                {
+                    public File getFile()
+                    {
+                        return new File( element );
+                    }
+                } );
+            }
+        }
+    }
 }

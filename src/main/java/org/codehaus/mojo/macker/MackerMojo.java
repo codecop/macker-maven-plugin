@@ -313,6 +313,10 @@ public class MackerMojo
             // if we're here, then everything went fine
             getLog().info( "Macker has not found any violation." );
         }
+        catch ( MojoExecutionException ex )
+        {
+            throw ex;
+        }
         catch ( MojoFailureException ex )
         {
             getLog().warn( "Macker has detected violations. Please refer to the XML report for more information." );
@@ -321,7 +325,7 @@ public class MackerMojo
                 throw ex;
             }
         }
-        catch ( IOException ex )
+        catch ( Exception ex )
         {
             throw new MojoExecutionException( "Error during Macker execution: " + ex.getMessage(), ex );
         }
@@ -437,12 +441,12 @@ public class MackerMojo
         throws IOException
     {
         // Macker macker = new net.innig.macker.Macker();
-//        ForkedMacker macker = new ForkedMacker();
-//        macker.setLog( getLog() );
-//        macker.setMaxmem( maxmem );
-//        macker.setPluginClasspathList( pluginClasspathList );
-//        macker.setQuiet( quiet );
-        Macker macker = new LinkedMacker();
+        // Macker macker = new LinkedMacker();
+        ForkedMacker macker = new ForkedMacker();
+        macker.setLog( getLog() );
+        macker.setMaxmem( maxmem );
+        macker.setPluginClasspathList( pluginClasspathList );
+        macker.setQuiet( quiet );
         macker.setVerbose( verbose );
         macker.setXmlReportFile( outputFile );
         if ( maxmsg > 0 )
