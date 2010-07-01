@@ -55,6 +55,11 @@ public interface Macker
 
     void setVerbose( boolean verbose );
 
-    void setXmlReportFile( File report );
+    /**
+     * Set the XML report file to be used by Macker.
+     * @throws IOException if there's a problem with the report file
+     */
+    void setXmlReportFile( File report )
+        throws IOException;
 
 }
