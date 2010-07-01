@@ -399,8 +399,10 @@ public class MackerMojo
      *
      * @param outputFile the result file that will should produced by Macker
      * @return the new instance of Macker
+     * @throws IOException if there's a problem with the report file
      */
     private Macker createMacker( File outputFile )
+        throws IOException
     {
         // Macker macker = new net.innig.macker.Macker();
         Macker macker = new LinkedMacker();
