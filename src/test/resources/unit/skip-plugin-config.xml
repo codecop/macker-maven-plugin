@@ -25,6 +25,9 @@
           <maxmsg>0</maxmsg>
           <verbose>false</verbose>
           <failOnError>true</failOnError>
+          <maxmem>64m</maxmem>
+          <pluginClasspathList implementation="org.codehaus.mojo.macker.stubs.ArtifactListStub" />
+          <quiet>false</quiet>
           <!-- END default values set by Maven mechanism -->
           <rulesDirectory>src/test/resources/unit/violation-configuration</rulesDirectory>
           <rule>macker-rules-violations.xml</rule>

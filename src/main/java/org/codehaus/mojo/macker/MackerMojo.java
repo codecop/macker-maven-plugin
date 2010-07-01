@@ -48,6 +48,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @requiresProject
  * @author <a href="http://www.codehaus.org/~wfay/">Wayne Fay</a>
  * @author <a href="http://people.apache.org/~bellingard/">Fabrice Bellingard</a>
+ * @author <a href="http://www.code-cop.org/">Peter Kofler</a>
  */
 public class MackerMojo
     extends AbstractMojo
@@ -196,6 +197,29 @@ public class MackerMojo
      * @readonly
      */
     private MavenProject project;
+
+    /**
+     * Maximum memory to pass JVM of Macker processes.
+     *
+     * @parameter expression="${macker.maxmem}" default-value="64m"
+     */
+    private String maxmem;
+
+    /**
+     * <i>Maven Internal</i>: List of artifacts for the plugin.
+     *
+     * @parameter expression="${plugin.artifacts}"
+     * @required
+     * @readonly
+     */
+    private List/*<Artifact>*/ pluginClasspathList;
+
+    /**
+     * Only output Macker errors, avoid info messages.
+     *
+     * @parameter expression="${quiet}" default-value="false"
+     */
+    private boolean quiet;
 
     /**
      * @throws MojoExecutionException if a error occurs during Macker execution
@@ -413,6 +437,11 @@ public class MackerMojo
         throws IOException
     {
         // Macker macker = new net.innig.macker.Macker();
+//        ForkedMacker macker = new ForkedMacker();
+//        macker.setLog( getLog() );
+//        macker.setMaxmem( maxmem );
+//        macker.setPluginClasspathList( pluginClasspathList );
+//        macker.setQuiet( quiet );
         Macker macker = new LinkedMacker();
         macker.setVerbose( verbose );
         macker.setXmlReportFile( outputFile );
