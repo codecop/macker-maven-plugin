@@ -14,6 +14,7 @@ package org.codehaus.mojo.macker;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -204,6 +205,13 @@ public class MackerMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
+        if ( !"java".equals( artifactHandler.getLanguage() ) )
+        {
+            getLog().info( "Not executing macker as the project is not a Java classpath-capable package" );
+            return;
+        }
+
         //configure ResourceManager
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
         locator.addSearchPath( "url", "" );

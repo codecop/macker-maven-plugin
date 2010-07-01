@@ -14,6 +14,7 @@ package org.codehaus.mojo.macker.stubs;
  * limitations under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
@@ -25,6 +26,7 @@ public class ProjectStub
     private static final String TEST_PROJECT = "target/test/unit";
     private static final String TEST_TARGET = TEST_PROJECT + "/target/";
 
+    private Artifact artifactStub;
     private Build buildStub;
 
     public ProjectStub()
@@ -34,6 +36,8 @@ public class ProjectStub
         Build build = new Build();
         build.setDirectory( getBasedir() + "/" + TEST_TARGET );
         setBuild( build );
+
+        setArtifact( new ArtifactStub() );
     }
 
     public Build getBuild()
@@ -44,6 +48,16 @@ public class ProjectStub
     public void setBuild( Build build )
     {
         buildStub = build;
+    }
+
+    public Artifact getArtifact()
+    {
+        return artifactStub;
+    }
+
+    public void setArtifact( Artifact artifact )
+    {
+        artifactStub = artifact;
     }
 
 }
