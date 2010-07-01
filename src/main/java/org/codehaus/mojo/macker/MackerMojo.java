@@ -232,7 +232,10 @@ public class MackerMojo
         ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
         if ( !"java".equals( artifactHandler.getLanguage() ) )
         {
-            getLog().info( "Not executing macker as the project is not a Java classpath-capable package" );
+            if ( !quiet )
+            {
+                getLog().info( "Not executing macker as the project is not a Java classpath-capable package" );
+            }
             return;
         }
 
@@ -266,13 +269,16 @@ public class MackerMojo
         if ( files == null || files.size() == 0 )
         {
             // no class file, we can't do anything
-            if ( includeTests )
+            if ( !quiet )
             {
-                getLog().info( "No class files in specified directories: " + classesDirectory + ", " + testClassesDirectory );
-            }
-            else
-            {
-                getLog().info( "No class files in specified directory: " + classesDirectory );
+                if ( includeTests )
+                {
+                    getLog().info( "No class files in specified directories: " + classesDirectory + ", " + testClassesDirectory );
+                }
+                else
+                {
+                    getLog().info( "No class files in specified directory: " + classesDirectory );
+                }
             }
         }
         else
@@ -311,7 +317,10 @@ public class MackerMojo
             // we're OK with configuration, let's run Macker
             macker.check();
             // if we're here, then everything went fine
-            getLog().info( "Macker has not found any violation." );
+            if ( !quiet )
+            {
+                getLog().info( "Macker has not found any violation." );
+            }
         }
         catch ( MojoExecutionException ex )
         {
