@@ -19,14 +19,16 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import org.codehaus.plexus.util.FileUtils;
-//import org.custommonkey.xmlunit.DetailedDiff;
-//import org.custommonkey.xmlunit.Diff;
-//import org.custommonkey.xmlunit.Difference;
-//import org.xml.sax.SAXException;
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.Difference;
+import org.xml.sax.SAXException;
 
 public class MackerMojoTest
     extends AbstractMojoTestCase
@@ -107,27 +109,27 @@ public class MackerMojoTest
         }
     }
 
-    private String readCleanedXml(File name) throws IOException {
-        return org.apache.commons.io.FileUtils.readFileToString( name ).replaceAll("<timestamp>.*?</timestamp>", "" );
-    }
-
-    private void assertOutput( String controlName, File generatedFile ) throws IOException
-    {
-        File controlFile = new File( TEST_POM_LOCATION + controlName );
-        String controlText = readCleanedXml( controlFile );
-        String generatedText = readCleanedXml( generatedFile );
-        assertEquals(controlText, generatedText );
-    }
-
-//    private void assertOutput( String controlFile, File generatedFile ) throws SAXException, IOException
-//    {
-//        Diff xmlDiff = new Diff( new FileReader( TEST_POM_LOCATION + controlFile ), new FileReader( generatedFile ) );
-//        DetailedDiff detailedDiff = new DetailedDiff( xmlDiff );
-//        List/*<Difference>*/differences = detailedDiff.getAllDifferences();
-//        assertEquals( 1, differences.size() );
-//        Difference diff = (Difference) differences.get( 0 ); // timestamp
-//        assertEquals( DEFAULT_DATE, diff.getControlNodeDetail().getValue() );
+//    private String readCleanedXml(File name) throws IOException {
+//        return org.apache.commons.io.FileUtils.readFileToString( name ).replaceAll("<timestamp>.*?</timestamp>", "" );
 //    }
+//
+//    private void assertOutput( String controlName, File generatedFile ) throws IOException
+//    {
+//        File controlFile = new File( TEST_POM_LOCATION + controlName );
+//        String controlText = readCleanedXml( controlFile );
+//        String generatedText = readCleanedXml( generatedFile );
+//        assertEquals(controlText, generatedText );
+//    }
+
+    private void assertOutput( String controlFile, File generatedFile ) throws SAXException, IOException
+    {
+        Diff xmlDiff = new Diff( new FileReader( TEST_POM_LOCATION + controlFile ), new FileReader( generatedFile ) );
+        DetailedDiff detailedDiff = new DetailedDiff( xmlDiff );
+        List/*<Difference>*/differences = detailedDiff.getAllDifferences();
+        assertEquals( 1, differences.size() );
+        Difference diff = (Difference) differences.get( 0 ); // timestamp
+        assertEquals( DEFAULT_DATE, diff.getControlNodeDetail().getValue() );
+    }
 
     public void testFailOnViolation() throws Exception
     {
