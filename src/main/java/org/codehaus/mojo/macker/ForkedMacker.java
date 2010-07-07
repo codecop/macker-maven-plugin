@@ -31,6 +31,7 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.CommandLineUtils.StringStreamConsumer;
+import org.codehaus.plexus.util.cli.shell.Shell;
 
 /**
  * Forking to invoke the Macker tool.  Based on
@@ -76,8 +77,9 @@ public class ForkedMacker
     private int executeJava()
         throws MojoExecutionException
     {
-        Commandline cl = new Commandline();
-        cl.setExecutable( "java" );
+        Commandline cl = new Commandline( new Shell() );
+        String javaPath = System.getProperty( "java.home" ) + File.separator + "bin";
+        cl.setExecutable( javaPath + File.separator + "java" );
         cl.createArg().setValue( "-cp" );
         cl.createArg().setValue( createClasspath() );
         if ( maxmem != null )
