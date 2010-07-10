@@ -19,8 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.plexus.util.cli.shell.Shell;
-
-class JavaShell
+/**
+ * Special version of Shell that forks to a JVM immediately without creating
+ * a command line. It uses the current java.home setting to find the java
+ * executable.
+ * @author <a href="http://www.code-cop.org/">Peter Kofler</a>
+ */
+public class JavaShell
     extends Shell
 {
 
