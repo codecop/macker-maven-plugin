@@ -24,15 +24,17 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.CommandLineUtils.StringStreamConsumer;
 
-public class CommandlineTest extends TestCase
+public class JavaShellTest
+    extends TestCase
 {
 
-    public CommandlineTest( String name )
+    public JavaShellTest( String name )
     {
         super( name );
     }
 
-    public void testDefaultShellVersion() throws CommandLineException
+    public void testDefaultShellVersion()
+        throws CommandLineException
     {
         Commandline cl = new Commandline();
         cl.setExecutable( "java" );
@@ -44,7 +46,8 @@ public class CommandlineTest extends TestCase
         assertEquals( 0, exitCode );
     }
 
-    public void testDefaultShellCall() throws IOException, CommandLineException
+    public void testDefaultShellCall()
+        throws IOException, CommandLineException
     {
         Commandline cl = new Commandline();
         cl.setExecutable( "java" );
@@ -61,7 +64,8 @@ public class CommandlineTest extends TestCase
         assertEquals( 3, exitCode );
     }
 
-    public void skip_testDefaultShellMaxArguments() throws IOException, CommandLineException
+    public void skip_testDefaultShellMaxArguments()
+        throws IOException, CommandLineException
     {
         Commandline cl = new Commandline();
         cl.setExecutable( "java" );
@@ -80,7 +84,8 @@ public class CommandlineTest extends TestCase
         assertEquals( max, exitCode );
     }
 
-    public void testJavaShellVersion() throws CommandLineException
+    public void testJavaShellVersion()
+        throws CommandLineException
     {
         Commandline cl = new Commandline( new JavaShell( new String[0] ) );
         cl.createArg().setValue( "-version" );
@@ -91,7 +96,8 @@ public class CommandlineTest extends TestCase
         assertEquals( 0, exitCode );
     }
 
-    public void testJavaShellCall() throws IOException, CommandLineException
+    public void testJavaShellCall()
+        throws IOException, CommandLineException
     {
         Commandline cl = new Commandline( new JavaShell( new String[] { "-cp", new File( "./target/test-classes" ).getCanonicalPath() } ) );
         cl.setExecutable( "org.codehaus.mojo.macker.ExitArgs" );
@@ -105,7 +111,8 @@ public class CommandlineTest extends TestCase
         assertEquals( 3, exitCode );
     }
 
-    public void testJavaShellMaxArguments() throws IOException, CommandLineException
+    public void skip_testJavaShellMaxArguments()
+        throws IOException, CommandLineException
     {
         Commandline cl = new Commandline( new JavaShell( new String[] { "-cp", new File( "./target/test-classes" ).getCanonicalPath() } ) );
         cl.setExecutable( "org.codehaus.mojo.macker.ExitArgs" );

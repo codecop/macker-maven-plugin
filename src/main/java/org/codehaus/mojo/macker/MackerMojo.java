@@ -451,7 +451,8 @@ public class MackerMojo
     {
         // Macker macker = new net.innig.macker.Macker();
         // Macker macker = new LinkedMacker();
-        ForkedMacker macker = new ForkedMacker();
+        // ForkedMacker macker = new ForkedMacker();
+        ForkedMacker macker = new ForkedJvmMacker();
         macker.setLog( getLog() );
         macker.setMaxmem( maxmem );
         macker.setPluginClasspathList( pluginClasspathList );
