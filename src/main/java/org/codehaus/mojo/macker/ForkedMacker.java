@@ -31,26 +31,27 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.CommandLineUtils.StringStreamConsumer;
-import org.codehaus.plexus.util.cli.shell.Shell;
 
 /**
  * Forking to invoke the Macker tool.  Based on
  * <code>org.codehaus.mojo.cobertura.tasks.AbstractTask</code>.
+ * This uses the Shell from CommandLine for forking.
+ * In Windows XP this has a max of 8kb command line arguments.
  */
 public class ForkedMacker
     implements Macker
 {
 
-    private List/*<String>*/options = new ArrayList/*<String>*/();
-    private List/*<String>*/rules = new ArrayList/*<String>*/();
-    private List/*<String>*/classes = new ArrayList/*<String>*/();
-    private final String taskClass = "net.innig.macker.Macker";
+    protected List/*<String>*/options = new ArrayList/*<String>*/();
+    protected List/*<String>*/rules = new ArrayList/*<String>*/();
+    protected List/*<String>*/classes = new ArrayList/*<String>*/();
+    protected final String taskClass = "net.innig.macker.Macker";
     private Log log = new SystemStreamLog();
-    private String maxmem;
+    protected String maxmem;
     private List/*<Artifact>*/pluginClasspathList;
     private boolean quiet;
 
-    private String createClasspath()
+    protected String createClasspath()
         throws MojoExecutionException
     {
         StringBuffer cpBuffer = new StringBuffer();
@@ -74,12 +75,11 @@ public class ForkedMacker
         return cpBuffer.toString();
     }
 
-    private int executeJava()
+    protected Commandline createCommandLine()
         throws MojoExecutionException
     {
-        Commandline cl = new Commandline( new Shell() );
-        String javaPath = System.getProperty( "java.home" ) + File.separator + "bin";
-        cl.setExecutable( javaPath + File.separator + "java" );
+        Commandline cl = new Commandline();
+        cl.setExecutable( "java" );
         cl.createArg().setValue( "-cp" );
         cl.createArg().setValue( createClasspath() );
         if ( maxmem != null )
@@ -99,7 +99,13 @@ public class ForkedMacker
         {
             cl.createArg().setValue( (String) it.next() );
         }
-        // TODO search how long a command line directly fed to java.exe may be
+        return cl;
+    }
+
+    private int executeJava()
+        throws MojoExecutionException
+    {
+        Commandline cl = createCommandLine();
 
         StringStreamConsumer stdout = new StringStreamConsumer();
         StringStreamConsumer stderr = new StringStreamConsumer();
