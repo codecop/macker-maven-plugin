@@ -48,6 +48,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @requiresProject
  * @author <a href="http://www.codehaus.org/~wfay/">Wayne Fay</a>
  * @author <a href="http://people.apache.org/~bellingard/">Fabrice Bellingard</a>
+ * @author <a href="http://www.code-cop.org/">Peter Kofler</a>
  */
 public class MackerMojo
     extends AbstractMojo
@@ -289,6 +290,10 @@ public class MackerMojo
             // if we're here, then everything went fine
             getLog().info( "Macker has not found any violation." );
         }
+        catch ( MojoExecutionException ex )
+        {
+            throw ex;
+        }
         catch ( MojoFailureException ex )
         {
             getLog().warn( "Macker has detected violations. Please refer to the XML report for more information." );
@@ -297,7 +302,7 @@ public class MackerMojo
                 throw ex;
             }
         }
-        catch ( IOException ex )
+        catch ( Exception ex )
         {
             throw new MojoExecutionException( "Error during Macker execution: " + ex.getMessage(), ex );
         }
