@@ -1,17 +1,22 @@
 package org.codehaus.mojo.macker;
 
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 import org.apache.maven.artifact.handler.ArtifactHandler;
@@ -245,11 +250,11 @@ public class MackerMojo
             // no class file, we can't do anything
             if ( includeTests )
             {
-                getLog().info( "No class files in specified directories: " + classesDirectory + ", " + testClassesDirectory );
+                getLog().info( "No class files in directories: " + classesDirectory + ", " + testClassesDirectory );
             }
             else
             {
-                getLog().info( "No class files in specified directory: " + classesDirectory );
+                getLog().info( "No class files in directory: " + classesDirectory );
             }
         }
         else
@@ -258,7 +263,8 @@ public class MackerMojo
             {
                 if ( !outputDirectory.mkdirs() )
                 {
-                    throw new MojoExecutionException( "Error during Macker execution: Could not create directory " + outputDirectory.getAbsolutePath() );
+                    throw new MojoExecutionException( "Error during Macker execution: Could not create directory "
+                            + outputDirectory.getAbsolutePath() );
                 }
             }
 
@@ -470,7 +476,6 @@ public class MackerMojo
             else
             {
                 getLog().info( "No class files in test directory: " + testClassesDirectory );
-                // throw new MojoExecutionException( "Error during Macker execution: " + testClassesDirectory.getAbsolutePath() + " is not a directory" );
             }
         }
 
