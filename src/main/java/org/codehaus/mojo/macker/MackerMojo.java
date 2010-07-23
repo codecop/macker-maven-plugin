@@ -15,7 +15,7 @@ package org.codehaus.mojo.macker;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
