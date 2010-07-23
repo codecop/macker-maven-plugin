@@ -151,7 +151,7 @@ public class MackerMojo
      *
      * @parameter expression="${rules}"
      */
-    private String[] rules;
+    private String[] rules = new String[0];
 
     /**
      * @component
@@ -530,7 +530,7 @@ public class MackerMojo
 
     public void setRules( String[] ruleSets )
     {
-        rules = ruleSets;
+        rules = (String[]) ruleSets.clone();
     }
 
 }
