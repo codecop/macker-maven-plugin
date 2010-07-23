@@ -10,7 +10,6 @@
   <packaging>maven-plugin</packaging>
   <version>0.9.0-SNAPSHOT</version>
   <name>Macker Maven Plugin (Linked)</name>
-  <!-- <url>http://mojo.codehaus.org/macker-maven-plugin</url> -->
   <url>http://code.google.com/p/code-cop-code/wiki/MackerMavenPlugin</url>
   <inceptionYear>2007</inceptionYear>
   <organization>
@@ -232,23 +231,29 @@
       </plugin>
     </plugins>
   </reporting>
- 
-    <distributionManagement>
-        <repository>
-            <id>local-releases</id>
-            <name>Code Cop Code Release Repository</name>
-            <url>file:///Develop/Java/JDK-1.5_Maven/mvn2repo/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>local-snapshots</id>
-            <name>Code Cop Code Snapshot Repository</name>
-            <url>file:///Develop/Java/JDK-1.5_Maven/mvn2repo/snapshots/</url>
-        </snapshotRepository>
-        <site>
-            <id>local-site</id>
-            <name>Code Cop Code Site Repository</name>
-            <url>file:///Develop/Java/JDK-1.5_Maven/mvn2repo/sites/${project.artifactId}</url>
-        </site>
-    </distributionManagement>
+
+  <scm>
+      <connection>scm:hg:https://${project.artifactId}.code-cop-code.googlecode.com/hg/</connection>
+      <developerConnection>scm:hg:https://${project.artifactId}.code-cop-code.googlecode.com/hg/</developerConnection>
+      <url>http://code.google.com/p/code-cop-code/source/browse?repo=${project.artifactId}</url>
+  </scm>
+
+  <distributionManagement>
+      <repository>
+          <id>local-releases</id>
+          <name>Code Cop Code Release Repository</name>
+          <url>file:///Develop/Java/JDK-1.5_Maven/mvn2repo/releases/</url>
+      </repository>
+      <snapshotRepository>
+          <id>local-snapshots</id>
+          <name>Code Cop Code Snapshot Repository</name>
+          <url>file:///Develop/Java/JDK-1.5_Maven/mvn2repo/snapshots/</url>
+      </snapshotRepository>
+      <site>
+          <id>local-site</id>
+          <name>Code Cop Code Site Repository</name>
+          <url>file:///Develop/Java/JDK-1.5_Maven/mvn2repo/sites/${project.artifactId}</url>
+      </site>
+  </distributionManagement>
 
 </project>
