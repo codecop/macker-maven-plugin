@@ -10,7 +10,7 @@
   <packaging>maven-plugin</packaging>
   <version>0.9.0-SNAPSHOT</version>
   <name>Macker Maven Plugin (Linked)</name>
-  <url>http://code.google.com/p/code-cop-code/wiki/MackerMavenPlugin</url>
+  <url>http://mojo.codehaus.org/macker-maven-plugin</url>
   <inceptionYear>2007</inceptionYear>
   <organization>
     <name>CodeHaus</name>
