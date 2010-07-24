@@ -37,11 +37,13 @@ public class CommandLineFileTest
     extends TestCase
 {
 
-    private static final File TEST_FILE = new File( "target/test/cmdlineargs.txt" );
+    private final File TEST_FILE;
 
     public CommandLineFileTest( String name )
+        throws IOException
     {
         super( name );
+        TEST_FILE = new File( "target/cmdlineargs.txt" ).getCanonicalFile();
     }
 
     protected void setUp()
