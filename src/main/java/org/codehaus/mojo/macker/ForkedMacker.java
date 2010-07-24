@@ -53,7 +53,7 @@ public class ForkedMacker
     protected final String taskClass = "net.innig.macker.Macker";
     private Log log = new SystemStreamLog();
     protected String maxmem;
-    private List/*<Artifact>*/pluginClasspathList;
+    private List/*<Artifact>*/pluginClasspathList = Collections.EMPTY_LIST;
     private boolean quiet;
 
     protected String createClasspath()
@@ -73,7 +73,8 @@ public class ForkedMacker
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Error while creating the canonical path for '" + artifact.getFile() + "'.", e );
+                throw new MojoExecutionException( "Error while creating the canonical path for '" + artifact.getFile()
+                        + "'.", e );
             }
         }
 
@@ -165,7 +166,7 @@ public class ForkedMacker
         throws MojoExecutionException, MojoFailureException
     {
         int returnCode = executeJava();
-        switch (returnCode)
+        switch ( returnCode )
         {
         case 0:
             log.debug( "All checks passed." );

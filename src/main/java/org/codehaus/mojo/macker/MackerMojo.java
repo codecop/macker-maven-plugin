@@ -293,7 +293,7 @@ public class MackerMojo
                 if ( !outputDirectory.mkdirs() )
                 {
                     throw new MojoExecutionException( "Error during Macker execution: Could not create directory "
-                    	       + outputDirectory.getAbsolutePath() );
+                            + outputDirectory.getAbsolutePath() );
                 }
             }
 
