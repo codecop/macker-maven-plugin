@@ -19,8 +19,10 @@
   <prerequisites>
     <maven>2.0</maven>
   </prerequisites>
-  <description>This plugin executes the Macker architectural rule checking utility against a project's compiled Java code.
-               The linked version calls Macker directly. As Macker is GNU licensed, this MOJO is GNU licensed as well.</description>
+  <description>
+    This plugin executes the Macker architectural rule checking utility against a project's compiled Java code.
+    The linked version calls Macker directly. As Macker is GNU licensed, this MOJO is GNU licensed as well.
+  </description>
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MOJO</url>
