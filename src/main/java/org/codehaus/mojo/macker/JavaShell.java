@@ -41,7 +41,7 @@ public class JavaShell
 
     public JavaShell( List vmArgs )
     {
-        this( (String[]) vmArgs.toArray( new String[0] ) );
+        this( (String[]) vmArgs.toArray( new String[vmArgs.size()] ) );
     }
 
     public JavaShell( String[] vmArgs )
