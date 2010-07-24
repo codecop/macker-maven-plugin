@@ -233,9 +233,9 @@
   </reporting>
 
   <scm>
-      <connection>scm:hg:https://macker-maven-plugin.code-cop-code.googlecode.com/hg/</connection>
-      <developerConnection>scm:hg:https://macker-maven-plugin.code-cop-code.googlecode.com/hg/</developerConnection>
-      <url>http://code.google.com/p/code-cop-code/source/browse?repo=macker-maven-plugin</url>
+      <connection>scm:hg:https://${project.artifactId}.code-cop-code.googlecode.com/hg/</connection>
+      <developerConnection>scm:hg:https://${project.artifactId}.code-cop-code.googlecode.com/hg/</developerConnection>
+      <url>http://code.google.com/p/code-cop-code/source/browse?repo=${project.artifactId}</url>
   </scm>
 
   <distributionManagement>
@@ -252,7 +252,7 @@
       <site>
           <id>local-site</id>
           <name>Code Cop Code Site Repository</name>
-          <url>file:///Develop/Java/JDK-1.5_Maven/mvn2repo/sites/macker-maven-plugin</url>
+          <url>file:///Develop/Java/JDK-1.5_Maven/mvn2repo/sites/${project.artifactId}</url>
       </site>
   </distributionManagement>
 
