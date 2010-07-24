@@ -41,7 +41,7 @@ import java.io.IOException;
  * It will save options in <code>builder.getCommandLineFile()</code>.  Options
  * will be stored one in a line.  Options are saved in UTF-8 encoding.
  *
- * @author Grzegorz Lukasik (as this was copied from the Maven Cobertura Plugin)
+ * @author Grzegorz Lukasik (Copied from Cobertura)
  */
 public class CommandLineBuilder
 {
