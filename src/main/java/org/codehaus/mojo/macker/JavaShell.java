@@ -25,9 +25,9 @@ import java.util.List;
 
 import org.codehaus.plexus.util.cli.shell.Shell;
 /**
- * Special version of Shell that forks to a JVM immediately without creating
- * a command line. It uses the current java.home setting to find the java
- * executable.
+ * Special version of Plexus CLI Shell that forks to a JVM immediately without
+ * creating a command line.  It uses the current java.home setting to find the java
+ * executable.  So we have more memory for command line arguments.
  * @author <a href="http://www.code-cop.org/">Peter Kofler</a>
  */
 public class JavaShell
