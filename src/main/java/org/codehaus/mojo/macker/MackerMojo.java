@@ -456,7 +456,7 @@ public class MackerMojo
         throws IOException
     {
         // Macker macker = new LinkedMacker();
-        ForkedMacker macker = new ForkedMacker();
+        ForkedMacker macker = new ForkedMacker( getProject().getBuild().getOutputDirectory() );
         macker.setLog( getLog() );
         macker.setMaxmem( maxmem );
         macker.setPluginClasspathList( pluginClasspathList );

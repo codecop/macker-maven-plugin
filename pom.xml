@@ -83,13 +83,27 @@
     <contributor>
       <name>dkulp</name>
       <roles>
-        <role>Maven PMD Plugin Developer</role>
+        <role>Maven PMD Plugin Developer (original source of extended configuration)</role>
       </roles>
     </contributor>
     <contributor>
       <name>Benjamin Bentmann</name>
       <roles>
-        <role>Maven PMD Plugin Developer</role>
+        <role>Maven PMD Plugin Developer (original source of extended configuration)</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Fabrizio Giustina</name>
+      <email>fgiust@apache.org</email>
+      <roles>
+        <role>Maven Cobertura Plugin Developer (original source of forking)</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Arnaud Heritier</name>
+      <email>aheritier@apache.org</email>
+      <roles>
+        <role>Maven Cobertura Plugin Despot (original source of forking)</role>
       </roles>
     </contributor>
   </contributors>

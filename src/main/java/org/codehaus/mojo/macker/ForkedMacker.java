@@ -40,36 +40,42 @@ import org.codehaus.plexus.util.cli.CommandLineUtils.StringStreamConsumer;
 /**
  * Forking to invoke the Macker tool.  Based on
  * <code>org.codehaus.mojo.cobertura.tasks.AbstractTask</code>.
- * This uses the Shell from CommandLine for forking.
- * In Windows XP this has a max of 8kb command line arguments.
+ * This uses the Shell from CommandLine for forking. In Windows XP this has
+ * a max of 8kb command line arguments.  So we have to use a command file.
+ * @author <a href="http://www.code-cop.org/">Peter Kofler</a>
  */
 public class ForkedMacker
     implements Macker
 {
 
-    protected List/*<String>*/options = new ArrayList/*<String>*/();
-    protected List/*<String>*/rules = new ArrayList/*<String>*/();
-    protected List/*<String>*/classes = new ArrayList/*<String>*/();
-    protected final String taskClass = "net.innig.macker.Macker";
+    private final String outputDirectory;
+    private List/*<String>*/options = new ArrayList/*<String>*/();
+    private List/*<String>*/rules = new ArrayList/*<String>*/();
+    private List/*<String>*/classes = new ArrayList/*<String>*/();
+    private final String commandClass = CommandLineFile.class.getName();
+    private final String taskClass = "net.innig.macker.Macker";
     private Log log = new SystemStreamLog();
-    protected String maxmem;
+    private String maxmem;
     private List/*<Artifact>*/pluginClasspathList = Collections.EMPTY_LIST;
     private boolean quiet;
 
-    protected String createClasspath()
+    public ForkedMacker( String outputDirectory )
+    {
+        this.outputDirectory = outputDirectory;
+    }
+
+    private String createClasspath()
         throws MojoExecutionException
     {
         StringBuffer cpBuffer = new StringBuffer();
+        cpBuffer.append( outputDirectory );
         for ( Iterator it = pluginClasspathList.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
             try
             {
+                cpBuffer.append( File.pathSeparator );
                 cpBuffer.append( artifact.getFile().getCanonicalPath() );
-                if ( it.hasNext() )
-                {
-                    cpBuffer.append( File.pathSeparator );
-                }
             }
             catch ( IOException e )
             {
@@ -81,29 +87,52 @@ public class ForkedMacker
         return cpBuffer.toString();
     }
 
-    protected Commandline createCommandLine()
+    private Commandline createCommandLine()
         throws MojoExecutionException
     {
-        Commandline cl = new Commandline();
-        cl.setExecutable( "java" );
-        cl.createArg().setValue( "-cp" );
-        cl.createArg().setValue( createClasspath() );
+        // Commandline cl = new Commandline();
+        // cl.setExecutable( "java" );
+        // cl.createArg().setValue( "-cp" );
+        // cl.createArg().setValue( createClasspath() );
+        // if ( maxmem != null )
+        // {
+        //     cl.createArg().setValue( "-Xmx" + maxmem );
+        // }
+        // cl.createArg().setValue( commandClass );
+        List/*<String>*/jvmArguments = new ArrayList/*<String>*/();
+        jvmArguments.add( "-cp" );
+        jvmArguments.add( createClasspath() );
         if ( maxmem != null )
         {
-            cl.createArg().setValue( "-Xmx" + maxmem );
+            jvmArguments.add( "-Xmx" + maxmem );
         }
+        Commandline cl = new Commandline( new JavaShell( jvmArguments ) );
+        cl.setExecutable( commandClass );
+
         cl.createArg().setValue( taskClass );
-        for ( Iterator/*<String>*/it = options.iterator(); it.hasNext(); )
+        try
         {
-            cl.createArg().setValue( (String) it.next() );
+            CommandLineBuilder builder = new CommandLineBuilder("macker");
+            for ( Iterator/*<String>*/it = options.iterator(); it.hasNext(); )
+            {
+                builder.addArg( (String) it.next() );
+            }
+            for ( Iterator/*<String>*/it = rules.iterator(); it.hasNext(); )
+            {
+                builder.addArg( (String) it.next() );
+            }
+            for ( Iterator/*<String>*/it = classes.iterator(); it.hasNext(); )
+            {
+                builder.addArg( (String) it.next() );
+            }
+            builder.saveArgs();
+            String commandsFile =  builder.getCommandLineFile();
+            cl.createArg().setValue( commandsFile );
+            // FileUtils.copyFile( new File( commandsFile ), new File( commandsFile + ".bak" ) );
         }
-        for ( Iterator/*<String>*/it = rules.iterator(); it.hasNext(); )
+        catch ( IOException e )
         {
-            cl.createArg().setValue( (String) it.next() );
-        }
-        for ( Iterator/*<String>*/it = classes.iterator(); it.hasNext(); )
-        {
-            cl.createArg().setValue( (String) it.next() );
+            throw new MojoExecutionException( "Unable to create CommandsFile.", e );
         }
         return cl;
     }

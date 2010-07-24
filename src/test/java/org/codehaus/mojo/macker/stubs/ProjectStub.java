@@ -40,6 +40,7 @@ public class ProjectStub
 
         Build build = new Build();
         build.setDirectory( getBasedir() + "/" + TEST_TARGET );
+        build.setOutputDirectory( "target/classes" );
         setBuild( build );
 
         setArtifact( new ArtifactStub() );
