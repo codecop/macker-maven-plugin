@@ -27,6 +27,7 @@ import java.io.IOException;
 
 /**
  * Abstraction of the Macker tool.
+ * @author <a href="http://www.code-cop.org/">Peter Kofler</a>
  */
 public interface Macker
 {
