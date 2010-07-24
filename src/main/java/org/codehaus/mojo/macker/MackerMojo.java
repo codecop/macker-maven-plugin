@@ -204,6 +204,29 @@ public class MackerMojo
     private MavenProject project;
 
     /**
+     * Maximum memory to pass JVM of Macker processes.
+     *
+     * @parameter expression="${macker.maxmem}" default-value="64m"
+     */
+    private String maxmem;
+
+    /**
+     * <i>Maven Internal</i>: List of artifacts for the plugin.
+     *
+     * @parameter expression="${plugin.artifacts}"
+     * @required
+     * @readonly
+     */
+    private List/*<Artifact>*/ pluginClasspathList;
+
+    /**
+     * Only output Macker errors, avoid info messages.
+     *
+     * @parameter expression="${quiet}" default-value="false"
+     */
+    private boolean quiet;
+
+    /**
      * @throws MojoExecutionException if a error occurs during Macker execution
      * @throws MojoFailureException if Macker detects a failure.
      * @see org.apache.maven.plugin.Mojo#execute()
@@ -214,7 +237,10 @@ public class MackerMojo
         ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
         if ( !"java".equals( artifactHandler.getLanguage() ) )
         {
-            getLog().info( "Not executing macker as the project is not a Java classpath-capable package" );
+            if ( !quiet )
+            {
+                getLog().info( "Not executing macker as the project is not a Java classpath-capable package" );
+            }
             return;
         }
 
@@ -248,13 +274,16 @@ public class MackerMojo
         if ( files == null || files.size() == 0 )
         {
             // no class file, we can't do anything
-            if ( includeTests )
+            if ( !quiet )
             {
-                getLog().info( "No class files in directories: " + classesDirectory + ", " + testClassesDirectory );
-            }
-            else
-            {
-                getLog().info( "No class files in directory: " + classesDirectory );
+                if ( includeTests )
+                {
+                    getLog().info( "No class files in directories: " + classesDirectory + ", " + testClassesDirectory );
+                }
+                else
+                {
+                    getLog().info( "No class files in directory: " + classesDirectory );
+                }
             }
         }
         else
@@ -264,7 +293,7 @@ public class MackerMojo
                 if ( !outputDirectory.mkdirs() )
                 {
                     throw new MojoExecutionException( "Error during Macker execution: Could not create directory "
-                            + outputDirectory.getAbsolutePath() );
+                    	       + outputDirectory.getAbsolutePath() );
                 }
             }
 
@@ -294,7 +323,10 @@ public class MackerMojo
             // we're OK with configuration, let's run Macker
             macker.check();
             // if we're here, then everything went fine
-            getLog().info( "Macker has not found any violation." );
+            if ( !quiet )
+            {
+                getLog().info( "Macker has not found any violation." );
+            }
         }
         catch ( MojoExecutionException ex )
         {
@@ -424,7 +456,13 @@ public class MackerMojo
         throws IOException
     {
         // Macker macker = new net.innig.macker.Macker();
-        Macker macker = new LinkedMacker();
+        // Macker macker = new LinkedMacker();
+        // ForkedMacker macker = new ForkedMacker();
+        ForkedMacker macker = new ForkedJvmMacker();
+        macker.setLog( getLog() );
+        macker.setMaxmem( maxmem );
+        macker.setPluginClasspathList( pluginClasspathList );
+        macker.setQuiet( quiet );
         macker.setVerbose( verbose );
         macker.setXmlReportFile( outputFile );
         if ( maxmsg > 0 )

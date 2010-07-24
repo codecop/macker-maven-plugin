@@ -114,6 +114,18 @@ public class MackerMojoTest
         }
     }
 
+//    private String readCleanedXml(File name) throws IOException {
+//        return org.apache.commons.io.FileUtils.readFileToString( name ).replaceAll("<timestamp>.*?</timestamp>", "" );
+//    }
+//
+//    private void assertOutput( String controlName, File generatedFile ) throws IOException
+//    {
+//        File controlFile = new File( TEST_POM_LOCATION + controlName );
+//        String controlText = readCleanedXml( controlFile );
+//        String generatedText = readCleanedXml( generatedFile );
+//        assertEquals(controlText, generatedText );
+//    }
+
     private void assertOutput( String controlFile, File generatedFile ) throws SAXException, IOException
     {
         Diff xmlDiff = new Diff( new FileReader( TEST_POM_LOCATION + controlFile ), new FileReader( generatedFile ) );
@@ -260,7 +272,7 @@ public class MackerMojoTest
         File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
         assertTrue( "macker-out.xml was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
     }
-
+    
     public void testIncludes() throws Exception
     {
         // POM configures a ruleset that fails on the given classes
