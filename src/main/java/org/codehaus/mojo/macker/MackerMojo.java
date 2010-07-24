@@ -455,10 +455,8 @@ public class MackerMojo
     private Macker createMacker( File outputFile )
         throws IOException
     {
-        // Macker macker = new net.innig.macker.Macker();
         // Macker macker = new LinkedMacker();
-        // ForkedMacker macker = new ForkedMacker();
-        ForkedMacker macker = new ForkedJvmMacker();
+        ForkedMacker macker = new ForkedMacker();
         macker.setLog( getLog() );
         macker.setMaxmem( maxmem );
         macker.setPluginClasspathList( pluginClasspathList );
