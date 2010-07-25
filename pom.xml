@@ -87,29 +87,41 @@
       <timezone>+1</timezone>
     </contributor>
     <contributor>
-      <name>dkulp</name>
+      <!-- dkulp -->
+      <name>J. Daniel Kulp</name>
       <roles>
-        <role>Maven PMD Plugin Developer (original source of extended configuration)</role>
+        <role>Maven PMD Plugin Developer (extended configuration)</role>
       </roles>
     </contributor>
     <contributor>
       <name>Benjamin Bentmann</name>
       <roles>
-        <role>Maven PMD Plugin Developer (original source of extended configuration)</role>
+        <role>Maven PMD Plugin Developer (extended configuration)</role>
       </roles>
     </contributor>
     <contributor>
+      <!-- fgiust -->
       <name>Fabrizio Giustina</name>
       <email>fgiust@apache.org</email>
       <roles>
-        <role>Maven Cobertura Plugin Developer (original source of forking)</role>
+        <role>Maven Cobertura Plugin Developer (forking logic)</role>
       </roles>
     </contributor>
     <contributor>
+      <!-- aheritier -->
       <name>Arnaud Heritier</name>
       <email>aheritier@apache.org</email>
       <roles>
-        <role>Maven Cobertura Plugin Despot (original source of forking)</role>
+        <role>Maven Cobertura Plugin Despot (forking logic)</role>
+        <role>Maven Eclipse Plugin Developer (abstract integration testcase)</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <!-- baerrach -->
+      <name>Barrie Treloar</name>
+      <email>baerrach@apache.org</email>
+      <roles>
+        <role>Maven Eclipse Plugin Developer (abstract integration testcase)</role>
       </roles>
     </contributor>
   </contributors>
@@ -148,7 +160,7 @@
       <artifactId>commons-io</artifactId>
       <version>1.1</version>
     </dependency>
-    <!-- Macker dependencies -->
+    <!-- Macker dependencies, only used for forking -->
     <dependency>
       <groupId>innig</groupId>
       <artifactId>macker</artifactId>
@@ -247,6 +259,7 @@
         </executions-->
       </plugin>
       <plugin>
+        <!-- would like to use the Maven Failsafe Plugin, but maven-plugin-testing-tools does not handle it -->
         <artifactId>maven-surefire-plugin</artifactId>
         <executions>
           <execution>
@@ -282,7 +295,7 @@
               <!-- lock down to old version as newer version aborts build upon no mojos as required during ITs, see below -->
               <version>2.4.3</version>
               <executions>
-                <!-- Disable execution, makes IT preparation using maven-plugin-testing-tools fail (see target/test-build-logs/setup.build.log) -->
+                <!-- disable execution, makes IT preparation using maven-plugin-testing-tools fail (see target/test-build-logs/setup.build.log) -->
                 <execution>
                   <id>help-mojo</id>
                   <configuration>
