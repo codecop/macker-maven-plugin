@@ -233,21 +233,22 @@
         </executions-->
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>failsafe-maven-plugin</artifactId>
-        <version>2.4.3-alpha-1</version>
+        <artifactId>maven-surefire-plugin</artifactId>
         <executions>
           <execution>
-            <id>integration-test</id>
+            <phase>integration-test</phase>
             <goals>
-              <goal>integration-test</goal>
+              <goal>test</goal>
             </goals>
-          </execution>
-          <execution>
-            <id>verify</id>
-            <goals>
-              <goal>verify</goal>
-            </goals>
+            <configuration>
+              <reportsDirectory>${project.build.directory}/failsafe-reports</reportsDirectory>
+              <includes>
+                <include>**/*IT.java</include>
+              </includes>
+              <excludes>
+                <exclude>specified only to override configuration from default execution</exclude>
+              </excludes>
+            </configuration>
           </execution>
         </executions>
       </plugin>
