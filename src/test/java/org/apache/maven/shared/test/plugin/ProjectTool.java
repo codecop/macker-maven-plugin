@@ -9,7 +9,7 @@ package org.apache.maven.shared.test.plugin;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +18,15 @@ package org.apache.maven.shared.test.plugin;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -39,16 +48,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -63,6 +62,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  *
  * @plexus.component role="org.apache.maven.shared.test.plugin.ProjectTool" role-hint="default"
  * @author jdcasey (Copied from maven-plugin-testing-tools-1.2, just added a property)
+ * @version $Id: ProjectTool.java 677115 2008-07-16 00:16:13Z vsiveton $
  */
 public class ProjectTool
 {
@@ -233,10 +233,10 @@ public class ProjectTool
 
         Properties properties = new Properties();
         // insert the test property to activate the test profile
-        properties.put( "failsafe-running-it", Boolean.TRUE.toString() );
+        properties.put( "maven-plugin-testing-tools:ProjectTool:packageProjectArtifact", Boolean.TRUE.toString() );
 
         List goals = new ArrayList();
-        goals.add( "clean" );
+        goals.add( "clean" ); // added to be sure
         goals.add( "package" );
 
         File buildLog = logFile == null ? pomInfo.getBuildLogFile() : logFile;
@@ -331,7 +331,7 @@ public class ProjectTool
                 buildDirectory = "target";
             }
 
-            buildDirectory = buildDirectory+File.separatorChar+"it-build-target";
+            buildDirectory = ( buildDirectory+File.separatorChar+"it-build-target" );
             build.setDirectory( buildDirectory );
             build.setOutputDirectory( buildDirectory+File.separatorChar+"classes" );
             System.out.println("Using "+build.getDirectory()+" and "+build.getOutputDirectory()+" to build IT version of plugin");
