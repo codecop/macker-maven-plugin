@@ -5,10 +5,10 @@
   <ruleset name="default rules">
 
     <access-rule>
-      <message>Math classes must not be used.</message>
+      <message>JD xml classes must not be used directly (only indirectly by XLST).</message>
       <deny>
         <from class="example.**" />
-        <to class="java.lang.Math" />
+        <to class="jd.**" />
       </deny>
     </access-rule>
 
