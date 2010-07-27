@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Abstraction of the Macker tool.
+ * Abstraction of the Macker tool.  There is a linked and a forked implementation.
  * @author <a href="http://www.code-cop.org/">Peter Kofler</a>
  */
 public interface Macker
