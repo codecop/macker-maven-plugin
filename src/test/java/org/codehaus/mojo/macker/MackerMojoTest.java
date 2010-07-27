@@ -24,15 +24,10 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 
 import org.codehaus.plexus.util.FileUtils;
-import org.custommonkey.xmlunit.DetailedDiff;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.Difference;
 import org.xml.sax.SAXException;
 
 public class MackerMojoTest
@@ -41,7 +36,8 @@ public class MackerMojoTest
     private static final String TEST_PROJECT = "target/test/unit";
     private static final String TEST_TARGET = TEST_PROJECT + "/target/";
     private static final String TEST_POM_LOCATION = "src/test/resources/unit/";
-    private static final String DEFAULT_DATE = "Sun Apr 25 01:23:20 CEST 2010";
+
+    private final XmlComparer comparer = new XmlComparer( TEST_POM_LOCATION );
 
     protected void setUp() throws Exception
     {
@@ -51,10 +47,10 @@ public class MackerMojoTest
         FileUtils.deleteDirectory( testTarget );
         testTarget.mkdirs();
 
-        final String examplesPath = "org/codehaus/mojo/macker/example";
-        File examplesTarget = new File( testTarget, "classes/" + examplesPath );
-        examplesTarget.mkdirs();
-        FileUtils.copyDirectory( new File( getBasedir(), "target/test-classes/" + examplesPath ), examplesTarget );
+        final String exampleClassesPath = "org/codehaus/mojo/macker/classes";
+        File exampleClassesTarget = new File( testTarget, "classes/" + exampleClassesPath );
+        exampleClassesTarget.mkdirs();
+        FileUtils.copyDirectory( new File( getBasedir(), "target/test-classes/" + exampleClassesPath ), exampleClassesTarget );
 
         final String testClassesPath = "org/codehaus/mojo/macker/testclasses";
         File testClassesTarget = new File( testTarget, "test-classes/" + testClassesPath );
@@ -62,228 +58,160 @@ public class MackerMojoTest
         FileUtils.copyDirectory( new File( getBasedir(), "target/test-classes/" + testClassesPath ), testClassesTarget );
     }
 
-    private File copyPom( String source ) throws IOException
+    private File copyPom( String source )
+        throws IOException
     {
         final File testPom = new File( getBasedir(), TEST_PROJECT + "/pom.xml" );
         FileUtils.copyFile( new File( getBasedir(), TEST_POM_LOCATION + source ), testPom );
         return testPom;
     }
 
-    public void testDefaultConfiguration() throws Exception
+    private void executeMackerMojo( String configXml )
+        throws Exception
     {
-        // POM configures a ruleset that does not fail on the given classes
-        File testPom = copyPom( "default-configuration-plugin-config.xml" );
+        File testPom = copyPom( configXml );
         MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
         assertNotNull( mojo );
         mojo.execute();
+    }
 
-        //check if the output files were generated
+    private void executeMackerMojoFails( String configXml )
+        throws Exception
+    {
+        try
+        {
+            executeMackerMojo( configXml );
+            fail( "MojoFailureException should be thrown." );
+        }
+        catch ( MojoFailureException e )
+        {
+            assertTrue( true );
+        }
+    }
+
+    private void executeMackerMojoError( String configXml )
+        throws Exception
+    {
+        try
+        {
+            executeMackerMojo( configXml );
+            fail( "MojoExecutionException should be thrown." );
+        }
+        catch ( MojoExecutionException e )
+        {
+            assertTrue( true );
+        }
+    }
+
+    private void assertNoOutput()
+    {
         File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-        assertTrue( "macker-out.xml was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-        assertTrue( "macker-out.xml is empty", generatedFile.length() > 0 );
+        assertFalse( generatedFile.exists() );
+    }
+
+    private void assertOutput( String configFolder )
+        throws SAXException, IOException
+    {
+        File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
+        assertTrue( "macker-out was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        comparer.compareXml( configFolder + "/" + "macker-out.xml", generatedFile );
+    }
+
+    public void testDefaultConfiguration() throws Exception
+    {
+        // POM configures a ruleset that does not fail on the given classes
+        executeMackerMojo( "default-configuration-plugin-config.xml" );
+        assertOutput( "default-configuration" );
     }
 
     public void testNotFailOnViolation() throws Exception
     {
         // POM configures a ruleset that fails on the given classes
         // but failOnError is false
-        File testPom = copyPom( "notfailonviolation-plugin-config.xml" );
-        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
-        mojo.execute();
-
-        // assert XML "macker-out.xml"
-        File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-        assertTrue( "macker-out was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-        assertOutput( "violation-configuration/macker-out.xml", generatedFile );
+        executeMackerMojo( "notfailonviolation-plugin-config.xml" );
+        assertOutput("violation-configuration");
     }
 
     public void testNotFailOnViolationButBroken() throws Exception
     {
         // POM configures plugin with a wrong value
-        File testPom = copyPom( "broken-notfailon-plugin-config.xml" );
-        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
-        try
-        {
-            mojo.execute();
-            fail( "MojoExecutionException should be thrown." );
-        }
-        catch ( MojoExecutionException e )
-        {
-            File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-            assertFalse( generatedFile.exists() );
-        }
-    }
-
-//    private String readCleanedXml(File name) throws IOException {
-//        return org.apache.commons.io.FileUtils.readFileToString( name ).replaceAll("<timestamp>.*?</timestamp>", "" );
-//    }
-//
-//    private void assertOutput( String controlName, File generatedFile ) throws IOException
-//    {
-//        File controlFile = new File( TEST_POM_LOCATION + controlName );
-//        String controlText = readCleanedXml( controlFile );
-//        String generatedText = readCleanedXml( generatedFile );
-//        assertEquals(controlText, generatedText );
-//    }
-
-    private void assertOutput( String controlFile, File generatedFile ) throws SAXException, IOException
-    {
-        Diff xmlDiff = new Diff( new FileReader( TEST_POM_LOCATION + controlFile ), new FileReader( generatedFile ) );
-        DetailedDiff detailedDiff = new DetailedDiff( xmlDiff );
-        List/*<Difference>*/differences = detailedDiff.getAllDifferences();
-        assertEquals( 1, differences.size() );
-        Difference diff = (Difference) differences.get( 0 ); // timestamp
-        assertEquals( DEFAULT_DATE, diff.getControlNodeDetail().getValue() );
+        executeMackerMojoError( "broken-notfailon-plugin-config.xml" );
+        assertNoOutput();
     }
 
     public void testFailOnViolation() throws Exception
     {
         // POM configures a ruleset that fails on the given classes
-        File testPom = copyPom( "failonviolation-plugin-config.xml" );
-        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
-        try
-        {
-            mojo.execute();
-            fail( "MojoFailureException should be thrown." );
-        }
-        catch ( MojoFailureException e )
-        {
-            // assert XML "macker-out.xml"
-            File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-            assertTrue( "macker-out was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-            assertOutput( "violation-configuration/macker-out.xml", generatedFile );
-        }
+        executeMackerMojoFails( "failonviolation-plugin-config.xml");
+        assertOutput("violation-configuration");
     }
 
     public void testFailOnBroken() throws Exception
     {
         // POM configures plugin with a wrong value
-        File testPom = copyPom( "broken-configuration-plugin-config.xml" );
-        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
-        try
-        {
-            mojo.execute();
-            fail( "MojoExecutionException should be thrown." );
-        }
-        catch ( MojoExecutionException e )
-        {
-            File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-            assertFalse( generatedFile.exists() );
-        }
+        executeMackerMojoError( "broken-configuration-plugin-config.xml" );
+        assertNoOutput();
     }
 
     public void testSkipped() throws Exception
     {
         // POM configures a ruleset that fails on the given classes
         // but the whole check is skipped
-        File testPom = copyPom( "skip-plugin-config.xml" );
-        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
-        mojo.execute();
-
-        // would fail, but did not because it's skipped
-        File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-        assertFalse( generatedFile.exists() );
+        executeMackerMojo( "skip-plugin-config.xml" );
+        assertNoOutput();
     }
 
     public void testIgnoreTestClasses() throws Exception
     {
         // POM configures a ruleset that fails on the given test classes
         // but the test classes are not configured zo execute
-        File testPom = copyPom( "notfailontestclasses-plugin-config.xml" );
-        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
-        mojo.execute();
-
-        //check if the output files were generated
-        File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-        assertTrue( "macker-out.xml was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        executeMackerMojo( "notfailontestclasses-plugin-config.xml" );
+        assertOutput( "notfailontestclasses-configuration" );
     }
 
     public void testFailInTestClasses() throws Exception
     {
         // POM configures a ruleset that fails on the given test classes
-        File testPom = copyPom( "failontestclasses-plugin-config.xml" );
-        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
-        try
-        {
-            mojo.execute();
-            fail( "MojoFailureException should be thrown." );
-        }
-        catch ( MojoFailureException e )
-        {
-            File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-            assertTrue( "macker-out was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-            assertOutput( "testclasses-configuration/macker-out.xml", generatedFile );
-        }
+        executeMackerMojoFails( "failontestclasses-plugin-config.xml" );
+        assertOutput( "testclasses-configuration" );
     }
 
     public void testIgnoreMissingTestClassesWhenIncluded() throws Exception
     {
         // POM configures a include tests
         // but test-classes folder is not there
-        File testPom = copyPom( "includetestswithoutclasses-configuration-plugin-config.xml" );
-        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
-        mojo.execute();
-
-        //check if the output files were generated
-        File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-        assertTrue( "macker-out.xml was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        executeMackerMojo( "includetestswithoutclasses-configuration-plugin-config.xml" );
+        assertOutput( "default-configuration" );
     }
 
     public void testSingleRuleInList() throws Exception
     {
         // POM configures two rulesets that each fail on the given classes
-        File testPom = copyPom( "onerule-configuration-plugin-config.xml" );
-        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
-        mojo.execute();
-
-        //check if the output files were generated
-        File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-        assertTrue( "macker-out.xml was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        executeMackerMojo( "onerule-configuration-plugin-config.xml" );
+        assertOutput( "default-configuration" );
     }
 
     public void testMultipleRules() throws Exception
     {
         // POM configures two rulesets that each fail on the given classes
-        File testPom = copyPom( "tworule-configuration-plugin-config.xml" );
-        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
-        try
-        {
-            mojo.execute();
-            fail( "MojoFailureException should be thrown." );
-        }
-        catch ( MojoFailureException e )
-        {
-            // assert XML "macker-out.xml"
-            File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-            assertTrue( "macker-out was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-            assertOutput( "double-configuration/macker-out.xml", generatedFile );
-        }
+        executeMackerMojoFails( "tworule-configuration-plugin-config.xml" );
+        assertOutput( "double-configuration" );
     }
 
     public void testExcludes() throws Exception
     {
         // POM configures a ruleset that fails on the given classes
         // but the offending class is excluded
-        File testPom = copyPom( "excludefailonviolation-plugin-config.xml" );
-        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
-        mojo.execute();
-
-        //check if the output files were generated
-        File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-        assertTrue( "macker-out.xml was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        executeMackerMojo( "excludefailonviolation-plugin-config.xml" );
+        assertOutput( "excludefailonviolation-configuration" );
     }
-    
+
     public void testIncludes() throws Exception
     {
         // POM configures a ruleset that fails on the given classes
         // but the offending class is not included
-        File testPom = copyPom( "notincludefailonviolation-plugin-config.xml" );
-        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
-        mojo.execute();
-
-        //check if the output files were generated
-        File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-        assertTrue( "macker-out.xml was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        executeMackerMojo( "notincludefailonviolation-plugin-config.xml" );
+        assertOutput( "excludefailonviolation-configuration" );
     }
 
     public void testFileURL() throws Exception
@@ -291,51 +219,26 @@ public class MackerMojoTest
         // POM configures a ruleset that fails on the given classes
         File testPom = copyPom( "norule-configuration-plugin-config.xml" );
         MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
+        assertNotNull( mojo );
         URL url = getClass().getClassLoader().getResource( "unit/default-configuration/macker-rules.xml" );
         mojo.setRules( new String[] { url.toString() } );
         mojo.execute();
 
-        //check if the output files were generated
-        File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-        assertTrue( "macker-out.xml was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        assertOutput( "default-configuration" );
     }
 
     public void testClasspathRules() throws Exception
     {
         // POM configures a rulesets from classpath that fails on the given classes
-        File testPom = copyPom( "classpath-configuration-plugin-config.xml" );
-        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
-        try
-        {
-            mojo.execute();
-            fail( "MojoFailureException should be thrown." );
-        }
-        catch ( MojoFailureException e )
-        {
-            // assert XML "macker-out.xml"
-            File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-            assertTrue( "macker-out was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-            assertOutput( "violation-configuration/macker-out.xml", generatedFile );
-        }
+        executeMackerMojoFails( "classpath-configuration-plugin-config.xml" );
+        assertOutput("violation-configuration");
     }
 
     public void testFailOnVariable() throws Exception
     {
         // POM configures a ruleset that fails on the given classes
-        File testPom = copyPom( "variableusage-plugin-config.xml" );
-        MackerMojo mojo = (MackerMojo) lookupMojo( "macker", testPom );
-        try
-        {
-            mojo.execute();
-            fail( "MojoFailureException should be thrown." );
-        }
-        catch ( MojoFailureException e )
-        {
-            // assert XML "macker-out.xml"
-            File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
-            assertTrue( "macker-out was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-            assertOutput( "violation-configuration/macker-out.xml", generatedFile );
-        }
+        executeMackerMojoFails( "variableusage-plugin-config.xml" );
+        assertOutput("violation-configuration");
     }
 
 }
