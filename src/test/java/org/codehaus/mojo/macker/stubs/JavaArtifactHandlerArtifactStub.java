@@ -20,14 +20,19 @@ package org.codehaus.mojo.macker.stubs;
  */
 
 import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.plugin.testing.stubs.ArtifactStub;
 import org.apache.maven.plugin.testing.stubs.DefaultArtifactHandlerStub;
 
-public class ArtifactStub
-    extends org.apache.maven.plugin.testing.stubs.ArtifactStub
+/**
+ * An artifact stub with a Java ArtifactHandler.
+ * @author <a href="http://www.code-cop.org/">Peter Kofler</a>
+ */
+public class JavaArtifactHandlerArtifactStub
+    extends ArtifactStub
 {
     private ArtifactHandler artifactHandlerStub;
 
-    public ArtifactStub()
+    public JavaArtifactHandlerArtifactStub()
     {
         DefaultArtifactHandlerStub handler = new DefaultArtifactHandlerStub( "jar" );
         handler.setLanguage( "java" );

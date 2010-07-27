@@ -1,4 +1,4 @@
-package org.codehaus.mojo.macker.example;
+package org.codehaus.mojo.macker.stubs;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,13 +19,19 @@ package org.codehaus.mojo.macker.example;
  * under the License.
  */
 
-import java.security.InvalidParameterException;
+import org.apache.maven.plugin.testing.stubs.StubArtifactResolver;
 
-public class ForbiddenReference
+/**
+ * An artifact resolver that does nothing because the artifact stubs are already "resolved".
+ * @author <a href="http://www.code-cop.org/">Peter Kofler</a>
+ */
+public class NullArtifactResolver
+    extends StubArtifactResolver
 {
-    public void calculate()
-        throws InvalidParameterException
+
+    public NullArtifactResolver()
     {
-        throw new InvalidParameterException( "what a bad guy" );
+        super( null, false, false );
     }
+
 }
