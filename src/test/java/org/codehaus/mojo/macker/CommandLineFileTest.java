@@ -32,6 +32,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
+import org.codehaus.mojo.macker.forked.SetArgs;
 
 public class CommandLineFileTest
     extends TestCase
@@ -51,7 +52,13 @@ public class CommandLineFileTest
     {
         super.setUp();
         SetArgs.reset();
+    }
+
+    protected void tearDown()
+        throws Exception
+    {
         TEST_FILE.delete();
+        super.tearDown();
     }
 
     public void testInvoke()

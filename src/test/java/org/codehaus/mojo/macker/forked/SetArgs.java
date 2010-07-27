@@ -1,4 +1,4 @@
-package org.codehaus.mojo.macker;
+package org.codehaus.mojo.macker.forked;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,10 +19,26 @@ package org.codehaus.mojo.macker;
  * under the License.
  */
 
-public class ExitArgs
+public class SetArgs
 {
+    private static String[] lastArgs;
+
+    public static String[] getLastArgs()
+    {
+        return lastArgs;
+    }
+
+    public static void reset()
+    {
+        lastArgs = null;
+    }
+
     public static void main( String[] args )
     {
-        System.exit( args.length );
+        lastArgs = args;
+        if ( args.length > 0 && args[0].equals( "uoex" ) )
+        {
+            throw new UnsupportedOperationException( "you asked for it" );
+        }
     }
 }
