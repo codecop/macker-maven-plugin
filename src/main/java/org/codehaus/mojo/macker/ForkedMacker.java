@@ -124,7 +124,6 @@ public class ForkedMacker
             builder.saveArgs();
             String commandsFile =  builder.getCommandLineFile();
             cl.createArg().setValue( commandsFile );
-            // FileUtils.copyFile( new File( commandsFile ), new File( commandsFile + ".bak" ) );
         }
         catch ( IOException e )
         {

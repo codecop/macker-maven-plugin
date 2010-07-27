@@ -259,6 +259,11 @@ public class MackerMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( skip )
+        {
+            return;
+        }
+
         ArtifactHandler artifactHandler = project.getArtifact().getArtifactHandler();
         if ( !"java".equals( artifactHandler.getLanguage() ) )
         {
@@ -273,11 +278,6 @@ public class MackerMojo
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
         locator.addSearchPath( "url", "" );
         locator.setOutputDirectory( new File( project.getBuild().getDirectory() ) );
-
-        if ( skip )
-        {
-            return;
-        }
 
         // check if rules were specified
         if ( null == rules || 0 == rules.length )
@@ -485,9 +485,9 @@ public class MackerMojo
         ForkedMacker macker = new ForkedMacker( );
         macker.setLog( getLog() );
         macker.setMaxmem( maxmem );
-
         macker.setPluginClasspathList( collectArtifactList() );
         macker.setQuiet( quiet );
+
         macker.setVerbose( verbose );
         macker.setXmlReportFile( outputFile );
         if ( maxmsg > 0 )
@@ -506,15 +506,14 @@ public class MackerMojo
     }
 
     /**
+     * Get the full classpath of this plugin including the plugin itself.
      * @throws MojoExecutionException if there's a creating the classpath for forking
      */
     private List collectArtifactList()
         throws MojoExecutionException
     {
-        List/*<Artifact>*/ classpath = new ArrayList/*<Artifact>*/();
-
+        // look up myself, it must be here
         Artifact myself = (Artifact) getProject().getPluginArtifactMap().get( "org.codehaus.mojo:macker-maven-plugin" );
-        // http://docs.codehaus.org/display/MAVENUSER/Mojo+Developer+Cookbook
         try
         {
             resolver.resolve( myself, remoteRepositories, localRepository );
@@ -524,6 +523,7 @@ public class MackerMojo
             throw new MojoExecutionException( e.getMessage(), e );
         }
 
+        List/*<Artifact>*/ classpath = new ArrayList/*<Artifact>*/();
         classpath.add( myself );
         classpath.addAll( pluginClasspathList );
         return classpath;
