@@ -44,7 +44,7 @@ public class ProjectStub
 
         // mock the build for the ResourceManager's outputDirectory
         Build build = new Build();
-        build.setDirectory( getBasedir() + "/" + (TEST_PROJECT_BASE_DIR + "/target/") );
+        build.setDirectory( getBasedir() + File.separator + (TEST_PROJECT_BASE_DIR + "/target/") );
         setBuild( build );
 
         // mock the artifact for the language handler check

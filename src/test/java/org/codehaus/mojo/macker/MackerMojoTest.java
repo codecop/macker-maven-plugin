@@ -114,7 +114,7 @@ public class MackerMojoTest
     {
         File generatedFile = new File( getBasedir(), TEST_TARGET + "macker-out.xml" );
         assertTrue( "macker-out was not created", FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-        comparer.compareXml( configFolder + "/" + "macker-out.xml", generatedFile );
+        comparer.compareXml( configFolder + File.separator + "macker-out.xml", generatedFile );
     }
 
     public void testDefaultConfiguration() throws Exception
