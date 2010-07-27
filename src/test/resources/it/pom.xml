@@ -20,6 +20,9 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>macker-maven-plugin</artifactId>
                 <version>test</version>
+                <configuration>
+                  <failOnError>false</failOnError>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>test</phase>

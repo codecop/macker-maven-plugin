@@ -7,7 +7,7 @@
     <access-rule>
       <message>JD xml classes must not be used directly (only indirectly by XLST).</message>
       <deny>
-        <from class="example.**" />
+        <from class="classes.**" />
         <to class="jd.**" />
       </deny>
     </access-rule>

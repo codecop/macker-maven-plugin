@@ -48,7 +48,6 @@ public class ForkedMacker
     implements Macker
 {
 
-    private final String outputDirectory;
     private List/*<String>*/options = new ArrayList/*<String>*/();
     private List/*<String>*/rules = new ArrayList/*<String>*/();
     private List/*<String>*/classes = new ArrayList/*<String>*/();
@@ -59,23 +58,20 @@ public class ForkedMacker
     private List/*<Artifact>*/pluginClasspathList = Collections.EMPTY_LIST;
     private boolean quiet;
 
-    public ForkedMacker( String outputDirectory )
-    {
-        this.outputDirectory = outputDirectory;
-    }
-
     private String createClasspath()
         throws MojoExecutionException
     {
         StringBuffer cpBuffer = new StringBuffer();
-        cpBuffer.append( outputDirectory );
         for ( Iterator it = pluginClasspathList.iterator(); it.hasNext(); )
         {
             Artifact artifact = (Artifact) it.next();
             try
             {
-                cpBuffer.append( File.pathSeparator );
                 cpBuffer.append( artifact.getFile().getCanonicalPath() );
+                if ( it.hasNext() )
+                {
+                    cpBuffer.append( File.pathSeparator );
+                }
             }
             catch ( IOException e )
             {

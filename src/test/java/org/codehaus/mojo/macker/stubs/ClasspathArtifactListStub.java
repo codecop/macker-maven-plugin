@@ -19,30 +19,31 @@ package org.codehaus.mojo.macker.stubs;
  * under the License.
  */
 
+import org.apache.maven.plugin.testing.stubs.ArtifactStub;
+
 import java.io.File;
 import java.util.ArrayList;
 
-// TODO search if there is a better way to stub the project.artifacts?
-
-public class ArtifactListStub
+/**
+ * An artifact list stub which populates itself using the java.class.path.
+ * @author <a href="http://www.code-cop.org/">Peter Kofler</a>
+ */
+public class ClasspathArtifactListStub
     extends ArrayList/*<Artifact>*/
 {
-    public ArtifactListStub()
+    public ClasspathArtifactListStub()
     {
         String[] elements = System.getProperty( "java.class.path" ).split( File.pathSeparator );
         for ( int i = 0; i < elements.length; i++ )
         {
-            final String element = elements[i];
-            if ( element.endsWith( ".jar" ) )
+            final String classPathElement = elements[i];
+            add( new ArtifactStub()
             {
-                add( new ArtifactStub()
+                public File getFile()
                 {
-                    public File getFile()
-                    {
-                        return new File( element );
-                    }
-                } );
-            }
+                    return new File( classPathElement );
+                }
+            } );
         }
     }
 }

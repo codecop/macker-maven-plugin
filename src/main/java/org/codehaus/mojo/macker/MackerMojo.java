@@ -19,7 +19,11 @@ package org.codehaus.mojo.macker;
  * under the License.
  */
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.AbstractArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -225,6 +229,27 @@ public class MackerMojo
      * @parameter expression="${quiet}" default-value="false"
      */
     private boolean quiet;
+
+    /**
+     * @parameter default-value="${localRepository}"
+     * @required
+     * @readonly
+     */
+    private ArtifactRepository localRepository;
+
+    /**
+     * @parameter default-value="${project.remoteArtifactRepositories}"
+     * @required
+     * @readonly
+     */
+    private List remoteRepositories;
+
+    /**
+     * @component
+     * @required
+     * @readonly
+     */
+    private ArtifactResolver resolver;
 
     /**
      * @throws MojoExecutionException if a error occurs during Macker execution
@@ -451,15 +476,17 @@ public class MackerMojo
      * @param outputFile the result file that will should produced by Macker
      * @return the new instance of Macker
      * @throws IOException if there's a problem with the report file
+     * @throws MojoExecutionException if there's a creating the classpath for forking
      */
     private Macker createMacker( File outputFile )
-        throws IOException
+        throws IOException, MojoExecutionException
     {
         // Macker macker = new LinkedMacker();
-        ForkedMacker macker = new ForkedMacker( getProject().getBuild().getOutputDirectory() );
+        ForkedMacker macker = new ForkedMacker( );
         macker.setLog( getLog() );
         macker.setMaxmem( maxmem );
-        macker.setPluginClasspathList( pluginClasspathList );
+
+        macker.setPluginClasspathList( collectArtifactList() );
         macker.setQuiet( quiet );
         macker.setVerbose( verbose );
         macker.setXmlReportFile( outputFile );
@@ -476,6 +503,30 @@ public class MackerMojo
             macker.setAngerThreshold( anger );
         }
         return macker;
+    }
+
+    /**
+     * @throws MojoExecutionException if there's a creating the classpath for forking
+     */
+    private List collectArtifactList()
+        throws MojoExecutionException
+    {
+        List/*<Artifact>*/ classpath = new ArrayList/*<Artifact>*/();
+
+        Artifact myself = (Artifact) getProject().getPluginArtifactMap().get( "org.codehaus.mojo:macker-maven-plugin" );
+        // http://docs.codehaus.org/display/MAVENUSER/Mojo+Developer+Cookbook
+        try
+        {
+            resolver.resolve( myself, remoteRepositories, localRepository );
+        }
+        catch ( AbstractArtifactResolutionException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+
+        classpath.add( myself );
+        classpath.addAll( pluginClasspathList );
+        return classpath;
     }
 
     /**

@@ -5,12 +5,12 @@
   <ruleset name="failing rules">
 
     <!-- <var name="base" value="org.codehaus.mojo.macker" />  -->
-    <pattern name="example" class="${base}.example.**" />
+    <pattern name="classes" class="${base}.classes.**" />
 
     <access-rule>
       <message>JD xml classes must not be used directly (only indirectly by XLST).</message>
       <deny>
-        <from pattern="example" />
+        <from pattern="classes" />
         <to class="jd.**" />
       </deny>
     </access-rule>
@@ -18,7 +18,7 @@
     <access-rule>
       <message>java.security classes must only be used inside util.crypt packages.</message>
       <deny>
-        <from pattern="example" />
+        <from pattern="classes" />
         <to>
           <include class="java.security.**" />
         </to>

@@ -28,8 +28,9 @@
           <failOnError>true</failOnError>
           <skip>false</skip>
           <maxmem>64m</maxmem>
-          <pluginClasspathList implementation="org.codehaus.mojo.macker.stubs.ArtifactListStub" />
+          <pluginClasspathList implementation="org.codehaus.mojo.macker.stubs.ClasspathArtifactListStub" />
           <quiet>false</quiet>
+          <resolver implementation="org.codehaus.mojo.macker.stubs.NullArtifactResolver" />
           <!-- END default values set by Maven mechanism -->
           <includeTests>true</includeTests>
           <rules>

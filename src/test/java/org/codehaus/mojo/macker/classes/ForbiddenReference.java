@@ -1,4 +1,4 @@
-package org.codehaus.mojo.macker.example;
+package org.codehaus.mojo.macker.classes;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,7 +19,13 @@ package org.codehaus.mojo.macker.example;
  * under the License.
  */
 
-public class WithoutReferences
-{
+import java.security.InvalidParameterException;
 
+public class ForbiddenReference
+{
+    public void calculate()
+        throws InvalidParameterException
+    {
+        throw new InvalidParameterException( "what a bad guy" );
+    }
 }
