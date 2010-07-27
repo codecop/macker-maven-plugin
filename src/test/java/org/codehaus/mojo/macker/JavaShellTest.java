@@ -20,10 +20,10 @@ package org.codehaus.mojo.macker;
  */
 
 import java.io.File;
-import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.codehaus.mojo.macker.forked.ExitArgs;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -32,104 +32,87 @@ import org.codehaus.plexus.util.cli.CommandLineUtils.StringStreamConsumer;
 public class JavaShellTest
     extends TestCase
 {
+    private String classPath;
+    private static final String FORKED_CLASS = ExitArgs.class.getName();
 
     public JavaShellTest( String name )
     {
         super( name );
     }
 
-    public void testDefaultShellVersion()
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+        classPath = new File( "./target/test-classes" ).getCanonicalPath();
+    }
+
+    private int execute( Commandline cl )
+        throws CommandLineException
+    {
+        StringStreamConsumer stdout = new StringStreamConsumer();
+        StringStreamConsumer stderr = new StringStreamConsumer();
+        return CommandLineUtils.executeCommandLine( cl, stdout, stderr );
+    }
+
+    public void testDefaultShellCall()
         throws CommandLineException
     {
         Commandline cl = new Commandline();
         cl.setExecutable( "java" );
-        cl.createArg().setValue( "-version" );
-
-        StringStreamConsumer stdout = new StringStreamConsumer();
-        StringStreamConsumer stderr = new StringStreamConsumer();
-        int exitCode = CommandLineUtils.executeCommandLine( cl, stdout, stderr );
-        assertEquals( 0, exitCode );
-    }
-
-    public void testDefaultShellCall()
-        throws IOException, CommandLineException
-    {
-        Commandline cl = new Commandline();
-        cl.setExecutable( "java" );
         cl.createArg().setValue( "-cp" );
-        cl.createArg().setValue( new File( "./target/test-classes" ).getCanonicalPath() );
-        cl.createArg().setValue( "org.codehaus.mojo.macker.ExitArgs" );
+        cl.createArg().setValue( classPath );
+        cl.createArg().setValue( FORKED_CLASS );
         cl.createArg().setValue( "oneArg" );
         cl.createArg().setValue( "2Arg" );
         cl.createArg().setValue( "3 Arg" );
 
-        StringStreamConsumer stdout = new StringStreamConsumer();
-        StringStreamConsumer stderr = new StringStreamConsumer();
-        int exitCode = CommandLineUtils.executeCommandLine( cl, stdout, stderr );
+        int exitCode = execute( cl );
         assertEquals( 3, exitCode );
     }
 
     public void skip_testDefaultShellMaxArguments()
-        throws IOException, CommandLineException
+        throws CommandLineException
     {
         Commandline cl = new Commandline();
         cl.setExecutable( "java" );
         cl.createArg().setValue( "-cp" );
-        cl.createArg().setValue( new File( "./target/test-classes" ).getCanonicalPath() );
-        cl.createArg().setValue( "org.codehaus.mojo.macker.ExitArgs" );
+        cl.createArg().setValue( classPath );
+        cl.createArg().setValue( FORKED_CLASS );
         final int max = 807; // win XP approx. 8kb
         for ( int i = 0; i < max; i++ )
         {
             cl.createArg().setValue( "a2b4c6d8x" ); // 9 plus blank is 10
         }
 
-        StringStreamConsumer stdout = new StringStreamConsumer();
-        StringStreamConsumer stderr = new StringStreamConsumer();
-        int exitCode = CommandLineUtils.executeCommandLine( cl, stdout, stderr );
+        int exitCode = execute( cl );
         assertEquals( max, exitCode );
     }
 
-    public void testJavaShellVersion()
+    public void testJavaShellCall()
         throws CommandLineException
     {
-        Commandline cl = new Commandline( new JavaShell( new String[0] ) );
-        cl.createArg().setValue( "-version" );
-
-        StringStreamConsumer stdout = new StringStreamConsumer();
-        StringStreamConsumer stderr = new StringStreamConsumer();
-        int exitCode = CommandLineUtils.executeCommandLine( cl, stdout, stderr );
-        assertEquals( 0, exitCode );
-    }
-
-    public void testJavaShellCall()
-        throws IOException, CommandLineException
-    {
-        Commandline cl = new Commandline( new JavaShell( new String[] { "-cp", new File( "./target/test-classes" ).getCanonicalPath() } ) );
-        cl.setExecutable( "org.codehaus.mojo.macker.ExitArgs" );
+        Commandline cl = new Commandline( new JavaShell( new String[] { "-cp", classPath } ) );
+        cl.setExecutable( FORKED_CLASS );
         cl.createArg().setValue( "oneArg" );
         cl.createArg().setValue( "2Arg" );
         cl.createArg().setValue( "3 Arg" );
 
-        StringStreamConsumer stdout = new StringStreamConsumer();
-        StringStreamConsumer stderr = new StringStreamConsumer();
-        int exitCode = CommandLineUtils.executeCommandLine( cl, stdout, stderr );
+        int exitCode = execute( cl );
         assertEquals( 3, exitCode );
     }
 
     public void skip_testJavaShellMaxArguments()
-        throws IOException, CommandLineException
+        throws CommandLineException
     {
-        Commandline cl = new Commandline( new JavaShell( new String[] { "-cp", new File( "./target/test-classes" ).getCanonicalPath() } ) );
-        cl.setExecutable( "org.codehaus.mojo.macker.ExitArgs" );
+        Commandline cl = new Commandline( new JavaShell( new String[] { "-cp", classPath } ) );
+        cl.setExecutable( FORKED_CLASS );
         final int max = 3261; // win XP approx. 32kb
         for ( int i = 0; i < max; i++ )
         {
             cl.createArg().setValue( "a2b4c6d8x" );
         }
 
-        StringStreamConsumer stdout = new StringStreamConsumer();
-        StringStreamConsumer stderr = new StringStreamConsumer();
-        int exitCode = CommandLineUtils.executeCommandLine( cl, stdout, stderr );
+        int exitCode = execute( cl );
         assertEquals( max, exitCode );
     }
 
