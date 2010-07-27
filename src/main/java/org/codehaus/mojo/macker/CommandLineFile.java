@@ -45,8 +45,6 @@ public class CommandLineFile
             System.exit( 1 );
         }
 
-        // I could play here with URLClassloader and set the classpath for the called class, but why bother...
-
         String className = args[0];
         Class clazz = Class.forName( className );
         Method main = clazz.getMethod( "main", new Class[] { String[].class } );
