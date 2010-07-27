@@ -2,7 +2,7 @@
 
 <macker>
 
-  <ruleset name="default rules">
+  <ruleset name="failing rules">
 
     <access-rule>
       <message>Math classes must not be used.</message>
