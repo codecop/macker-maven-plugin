@@ -22,6 +22,7 @@ package org.codehaus.mojo.macker;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -62,9 +63,27 @@ public class XmlComparer
         Diff xmlDiff = new Diff( new FileReader( controlFileFolder + controlFile ), new FileReader( generatedFile ) );
         DetailedDiff detailedDiff = new DetailedDiff( xmlDiff );
         List/*<Difference>*/differences = detailedDiff.getAllDifferences();
-        assertEquals( differences.toString(), 1, differences.size() );
-        Difference diff = (Difference) differences.get( 0 ); // timestamp
-        assertEquals( DEFAULT_DATE, diff.getControlNodeDetail().getValue() );
+        if ( differences.size() == 1 )
+        {
+            Difference diff = (Difference) differences.get( 0 ); // timestamp
+            assertEquals( DEFAULT_DATE, diff.getControlNodeDetail().getValue() );
+        }
+        else
+        {
+            StringBuffer buf = new StringBuffer();
+            for ( Iterator/*<Difference>*/i = differences.iterator(); i.hasNext(); )
+            {
+                Difference diff = (Difference) i.next();
+                if ( diff.toString().startsWith( "Expected text value 'Sun Apr 25 01:23:20 CEST 2010' but was" ) )
+                {
+                    continue;
+                }
+                buf.append( diff.toString() );
+                buf.append( "\n" );
+            }
+            fail( "expected only one difference:\n" + buf.toString() );
+        }
+        assertEquals( detailedDiff.toString(), 1, differences.size() );
     }
 
 }
