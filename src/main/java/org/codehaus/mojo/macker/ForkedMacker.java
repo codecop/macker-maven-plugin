@@ -47,12 +47,12 @@ import org.codehaus.plexus.util.cli.CommandLineUtils.StringStreamConsumer;
 public class ForkedMacker
     implements Macker
 {
+    private static final String COMMAND_CLASS = CommandLineFile.class.getName();
+    private static final String TASK_CLASS = "net.innig.macker.Macker";
 
     private List/*<String>*/options = new ArrayList/*<String>*/();
     private List/*<String>*/rules = new ArrayList/*<String>*/();
     private List/*<String>*/classes = new ArrayList/*<String>*/();
-    private final String commandClass = CommandLineFile.class.getName();
-    private final String taskClass = "net.innig.macker.Macker";
     private Log log = new SystemStreamLog();
     private String maxmem;
     private List/*<Artifact>*/pluginClasspathList = Collections.EMPTY_LIST;
@@ -103,12 +103,12 @@ public class ForkedMacker
             jvmArguments.add( "-Xmx" + maxmem );
         }
         Commandline cl = new Commandline( new JavaShell( jvmArguments ) );
-        cl.setExecutable( commandClass );
+        cl.setExecutable( COMMAND_CLASS );
 
-        cl.createArg().setValue( taskClass );
+        cl.createArg().setValue( TASK_CLASS );
         try
         {
-            CommandLineBuilder builder = new CommandLineBuilder("macker");
+            CommandLineBuilder builder = new CommandLineBuilder( "macker" );
             for ( Iterator/*<String>*/it = options.iterator(); it.hasNext(); )
             {
                 builder.addArg( (String) it.next() );
