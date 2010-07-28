@@ -52,7 +52,7 @@ public class CommandLineFile
         List/*<String>*/lines = new ArrayList/*<String>*/();
         if ( args.length == 2 )
         {
-            Reader in = new InputStreamReader(new FileInputStream( args[1] ), "UTF-8" );
+            Reader in = new InputStreamReader( new FileInputStream( args[1] ), "UTF-8" );
             try
             {
                 lines = IOUtils.readLines( in );
