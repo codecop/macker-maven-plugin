@@ -19,6 +19,9 @@ package org.codehaus.mojo.macker.forked;
  * under the License.
  */
 
+/**
+ * Java main that exits with the number of arguments as exit code.
+ */
 public class ExitArgs
 {
     public static void main( String[] args )

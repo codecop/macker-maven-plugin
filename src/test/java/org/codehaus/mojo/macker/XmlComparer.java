@@ -31,7 +31,10 @@ import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.xml.sax.SAXException;
-
+/**
+ * Uses XmlUnit to compare created Macker result XML reports against the expected ones.
+ * @author <a href="http://www.code-cop.org/">Peter Kofler</a>
+ */
 public class XmlComparer
     extends Assert
 {

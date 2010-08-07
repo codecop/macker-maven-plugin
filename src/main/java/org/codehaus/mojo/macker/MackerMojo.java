@@ -303,11 +303,11 @@ public class MackerMojo
             {
                 if ( includeTests )
                 {
-                    getLog().info( "No class files in directories: " + classesDirectory + ", " + testClassesDirectory );
+                    getLog().info( "No class files in directories " + classesDirectory + ", " + testClassesDirectory );
                 }
                 else
                 {
-                    getLog().info( "No class files in directory: " + classesDirectory );
+                    getLog().info( "No class files in specified directory " + classesDirectory );
                 }
             }
         }
@@ -536,7 +536,7 @@ public class MackerMojo
      */
     public MavenProject getProject()
     {
-        return project;
+        return this.project;
     }
 
     /**
@@ -620,7 +620,10 @@ public class MackerMojo
         return StringUtils.join( patterns.iterator(), "," );
     }
 
-    public void setRules( String[] ruleSets )
+    /**
+     * For test purposes only.
+     */
+    void setRules( String[] ruleSets )
     {
         rules = (String[]) ruleSets.clone();
     }

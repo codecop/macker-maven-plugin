@@ -21,6 +21,9 @@ package org.codehaus.mojo.macker.testclasses;
 
 import java.sql.SQLException;
 
+/**
+ * Test class in the "test classpath" with a bad reference.
+ */
 public class BadDatabaseClass
 {
 
