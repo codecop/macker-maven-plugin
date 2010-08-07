@@ -24,7 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * Helper class for storing long command lines inside temporary file.
+ * Helper class for storing long command lines inside a temporary file.
  * <p>
  * Typical usage:
  *
@@ -41,7 +41,7 @@ import java.io.IOException;
  * It will save options in <code>builder.getCommandLineFile()</code>.  Options
  * will be stored one in a line.  Options are saved in UTF-8 encoding.
  *
- * @author Grzegorz Lukasik (Copied from Cobertura)
+ * @author Grzegorz Lukasik (Cobertura)
  */
 public class CommandLineBuilder
 {

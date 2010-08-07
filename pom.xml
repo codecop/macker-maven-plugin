@@ -26,6 +26,12 @@
     This plugin executes the Macker architectural rule checking utility against a project's compiled Java code.
   </description>
 
+  <scm>
+    <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/sandbox/macker-maven-plugin</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/sandbox/macker-maven-plugin</developerConnection>
+    <url>http://svn.codehaus.org/mojo/trunk/sandbox/macker-maven-plugin</url>
+  </scm>
+
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MOJO</url>
@@ -89,6 +95,8 @@
     <contributor>
       <!-- dkulp -->
       <name>J. Daniel Kulp</name>
+      <email>dkulp at apache dot org</email>
+      <organization>ASF</organization>
       <roles>
         <role>Maven PMD Plugin Developer (extended configuration)</role>
       </roles>
@@ -102,7 +110,8 @@
     <contributor>
       <!-- fgiust -->
       <name>Fabrizio Giustina</name>
-      <email>fgiust@apache.org</email>
+      <email>fgiust at apache dot org</email>
+      <organization>ASF</organization>
       <roles>
         <role>Maven Cobertura Plugin Developer (forking logic)</role>
       </roles>
@@ -110,7 +119,8 @@
     <contributor>
       <!-- aheritier -->
       <name>Arnaud Heritier</name>
-      <email>aheritier@apache.org</email>
+      <email>aheritier at apache dot org</email>
+      <organization>ASF</organization>
       <roles>
         <role>Maven Cobertura Plugin Despot (forking logic)</role>
         <role>Maven Eclipse Plugin Developer (abstract integration testcase)</role>
@@ -119,7 +129,8 @@
     <contributor>
       <!-- baerrach -->
       <name>Barrie Treloar</name>
-      <email>baerrach@apache.org</email>
+      <email>baerrach at apache dot org</email>
+      <organization>ASF</organization>
       <roles>
         <role>Maven Eclipse Plugin Developer (abstract integration testcase)</role>
       </roles>
@@ -144,6 +155,12 @@
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
       <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
        <groupId>org.codehaus.plexus</groupId>
@@ -212,12 +229,6 @@
       <version>2.6.2</version>
     </dependency>
     <!-- Test dependencies -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.2</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-test-tools</artifactId>

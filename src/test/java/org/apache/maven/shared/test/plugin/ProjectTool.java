@@ -19,15 +19,6 @@ package org.apache.maven.shared.test.plugin;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.handler.ArtifactHandler;
@@ -48,6 +39,16 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -59,6 +60,17 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * Testing tool used to read MavenProject instances from pom.xml files, and to create plugin jar
  * files (package phase of the normal build process) for distribution to a test local repository
  * directory.
+ *
+ * <br /><b>Note</b>:
+ * ProjectTool.java is part of the org.apache.maven.plugin-testing:maven-plugin-testing-tools:1.2.
+ * It was copied from Revision 677115 2008-07-16 00:16:13Z from the source.
+ *
+ * I needed to set a Java property called "maven-plugin-testing-tools:ProjectTool:packageProjectArtifact"
+ * to the forked JVM executing Maven call, to change the behavior in the POM. This is necessary as the
+ * helpmojo execution has to be disabled. It makes IT preparation using maven-plugin-testing-tools fail.
+ * (The same problem exists in the org.apache.maven.plugins:maven-eclipse-plugin, but there integration
+ * tests are NOT run before install phase but only on demand in a separate profile.)
+ * ~~~ Peter Kofler
  *
  * @plexus.component role="org.apache.maven.shared.test.plugin.ProjectTool" role-hint="default"
  * @author jdcasey (Copied from maven-plugin-testing-tools-1.2, just added a property)
@@ -331,7 +343,7 @@ public class ProjectTool
                 buildDirectory = "target";
             }
 
-            buildDirectory = ( buildDirectory+File.separatorChar+"it-build-target" );
+            buildDirectory = buildDirectory+File.separatorChar+"it-build-target";
             build.setDirectory( buildDirectory );
             build.setOutputDirectory( buildDirectory+File.separatorChar+"classes" );
             System.out.println("Using "+build.getDirectory()+" and "+build.getOutputDirectory()+" to build IT version of plugin");

@@ -20,7 +20,9 @@ package org.codehaus.mojo.macker.classes;
  */
 
 import java.security.InvalidParameterException;
-
+/**
+ * Test class in the "classpath" with a bad reference.
+ */
 public class ForbiddenReference
 {
     public void calculate()

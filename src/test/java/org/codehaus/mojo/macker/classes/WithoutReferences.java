@@ -19,6 +19,9 @@ package org.codehaus.mojo.macker.classes;
  * under the License.
  */
 
+/**
+ * Test class in the "classpath".
+ */
 public class WithoutReferences
 {
 

@@ -36,19 +36,19 @@ Maven 2 Macker Plugin - How to Use
 
 **Configuration Parameters
 
- The outputName parameter allows you to name the generated XML output file. The default is <<<macker-out.xml>>>.
+ The outputName parameter allows you to name the generated XML output file. The default is macker-out.xml.
  
- The <<<maxmsg>>> parameter corresponds to the <<<printMaxMessages>>> setting in Macker.
+ The maxmsg parameter corresponds to the printMaxMessages setting in Macker.
  
- The <<<print>>> parameter corresponds to the <<<printThreshold>>> setting in Macker. Valid values are debug, info, warning, and error.
+ The print parameter corresponds to the printThreshold setting in Macker. Valid values are debug, info, warning, and error.
  
- The <<<anger>>> parameter corresponds to the <<<angerThreshold>>> setting in Macker. Valid values are debug, info, warning, and error.
+ The anger parameter corresponds to the angerThreshold setting in Macker. Valid values are debug, info, warning, and error.
  
- The <<<rule>>> parameter allows the user to specify the name of the rules XML file that Macker will use. The default is <<<macker-rules.xml>>>. Several XML files are allowed using the <<<rules>>> (list) parameter.
+ The rule parameter allows the user to specify the name of the rules XML file that Macker will use. The default is macker-rules.xml. Several XML files are allowed using the rules (list) parameter.
  
- The <<<verbose>>> parameter corresponds to the verbose setting in Macker.
+ The verbose parameter corresponds to the verbose setting in Macker.
  
- The <<<variables>>> (map) parameter allows you to define additional variables that will be passed to Macker.
+ The variables (map) parameter allows you to define additional variables that will be passed to Macker.
 
  Please read the {{{http://www.innig.net/macker/guide/index.html}Macker documentation}} for more information.
 
