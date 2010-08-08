@@ -1,0 +1,8 @@
+
+syntax: regexp
+^target$
+syntax: regexp
+^codehaus\.org$
+
+syntax: regexp
+\.launch$
