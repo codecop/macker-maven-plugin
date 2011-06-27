@@ -126,7 +126,7 @@ public class ProjectTool
      * repository directory to resolve ancestor POMs as needed.
      *
      * @param pomFile current POM file
-     * @param localRepositoryBasedir
+     * @param localRepositoryBasedir .
      * @return the Maven project from a file and a local repo
      * @throws TestToolsException if any
      */
@@ -164,7 +164,7 @@ public class ProjectTool
      * repository directory to resolve ancestor POMs as needed.
      *
      * @param pomFile current POM file
-     * @param localRepositoryBasedir
+     * @param localRepositoryBasedir .
      * @return the Maven project with dependencies from a file and a local repo
      * @throws TestToolsException if any
      */
