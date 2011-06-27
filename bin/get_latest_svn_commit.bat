@@ -14,8 +14,7 @@ cd ..
 cd macker4update
 
 rem update to last CodehausTrunk revision
-call hg up -r 59
-call hg up
+call hg up CodehausTrunk
 
 rem merge with the new SVN revision
 rem call hg merge -r TODO
