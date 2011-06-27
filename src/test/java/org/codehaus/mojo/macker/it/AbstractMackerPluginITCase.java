@@ -21,6 +21,7 @@ package org.codehaus.mojo.macker.it;
 
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.MavenSettingsBuilder;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.test.plugin.BuildTool;
@@ -238,6 +239,10 @@ public abstract class AbstractMackerPluginITCase
         request.setShowErrors( true );
         request.getProperties().setProperty( "downloadSources", "false" );
         request.getProperties().setProperty( "downloadJavadocs", "false" );
+        if ( System.getProperty( MavenSettingsBuilder.ALT_USER_SETTINGS_XML_LOCATION ) != null )
+        {
+            request.setUserSettingsFile( new File( System.getProperty( MavenSettingsBuilder.ALT_USER_SETTINGS_XML_LOCATION ) ) );
+        }
 
         // request.setDebug( true );
         if ( switchLocalRepo )
