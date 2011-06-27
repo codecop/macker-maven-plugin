@@ -5,6 +5,7 @@
         <groupId>test</groupId>
         <artifactId>maven-macker-plugin-it-parent</artifactId>
         <version>1</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
