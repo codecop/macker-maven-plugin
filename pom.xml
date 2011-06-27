@@ -295,15 +295,6 @@
     <profile>
       <id>failsafe-runnung-it</id>
       <build>
-        <!-- skip test resources to speed up things -->
-        <testResources>
-          <testResource>
-            <directory>src/test/resources</directory>
-            <excludes>
-              <exclude>**/*</exclude>
-            </excludes>
-          </testResource>
-        </testResources>
         <pluginManagement>
           <plugins>
             <!-- skip test compile to speed up things -->

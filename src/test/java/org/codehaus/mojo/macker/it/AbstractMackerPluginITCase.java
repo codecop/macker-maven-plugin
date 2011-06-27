@@ -19,6 +19,13 @@ package org.codehaus.mojo.macker.it;
  * under the License.
  */
 
+import org.apache.maven.model.DeploymentRepository;
+import org.apache.maven.model.DistributionManagement;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Repository;
+import org.apache.maven.model.Site;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.MavenSettingsBuilder;
@@ -32,8 +39,11 @@ import org.apache.maven.shared.test.plugin.TestToolsException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -42,7 +52,11 @@ import org.codehaus.classworlds.ClassRealm;
 import org.codehaus.mojo.macker.XmlComparer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.xml.sax.SAXException;
 
 /**
@@ -70,7 +84,7 @@ public abstract class AbstractMackerPluginITCase
     /**
      * Pom File.
      */
-    private static final File pomFile = new File( getBasedir(), "pom.xml" );
+    private static File pomFile = new File( getBasedir(), "pom.xml" );
 
     /**
      * Version under which the plugin was installed to the test-time local repository for running test builds.
@@ -127,13 +141,12 @@ public abstract class AbstractMackerPluginITCase
         {
             if ( !installed )
             {
-                // this fails if the local repo is not in default place
-                // use setting -Dmaven.repo.local=<.repository> to fix this.
                 PluginTestTool pluginTestTool = (PluginTestTool) lookup( PluginTestTool.ROLE, "default" );
                 localRepositoryDirectory = pluginTestTool.preparePluginForUnitTestingWithMavenBuilds( pomFile, VERSION,
                         localRepositoryDirectory );
                 System.out.println( "*** Installed test-version of the plugin to: " + localRepositoryDirectory );
                 installed = true;
+                // fails if the local repo is not in default place. use setting -Dmaven.repo.local=<.repository> to fix this
             }
         }
 
@@ -173,38 +186,117 @@ public abstract class AbstractMackerPluginITCase
     protected void testProject( String projectName, String goalList )
         throws Exception
     {
-        File baseDir = getTestFile( "target/it-build-target/test-classes/it/" + projectName );
+        File baseDir = getTestModuleBaseDir( projectName );
         testProject( baseDir, new Properties(), goalList );
+    }
+
+    private File getTestModuleBaseDir( String projectName )
+    {
+        return getTestFile( "target/it-build-target/test-classes/it/" + projectName );
     }
 
     /**
      * Execute the plugin.
-     * @param baseDir Execute the plugin goal on a test project and verify generated files.
+     * @param testModuleBaseDir Execute the plugin goal on a test project and verify generated files.
      * @param properties additional properties
      * @param goalList comma separated list of goals to execute
      * @throws Exception any exception generated during test
      */
-    protected void testProject( File baseDir, Properties properties, String goalList )
+    protected void testProject( File testModuleBaseDir, Properties properties, String goalList )
         throws Exception
     {
-        File pom = new File( baseDir, "pom.xml" );
+        File pom = new File( testModuleBaseDir, "pom.xml" );
+        // this pom needs to be mangled, so it uses localAsRemote repository!
+        File mangledPom = manglePomForTestModule(pom);
 
-        String[] goal = goalList.split( "," );
-        List/*<String>*/ goals = new ArrayList/*<String>*/();
-        for ( int i = 0; i < goal.length; i++ )
-        {
-            goals.add( goal[i] );
-        }
-        System.out.println( "Now Building the test module " + baseDir.getName() + "..." );
-        System.out.println( "Using staged module-pom: " + pom.getAbsolutePath() );
-        executeMaven( pom, properties, goals, true );
+        String[] goal = goalList.split( "\\s*,\\s*" );
+        List/*<String>*/ goals = new ArrayList/*<String>*/( Arrays.asList( goal ) );
 
-        MavenProject project = readProject( pom );
+        System.out.println( "Now Building the test module " + testModuleBaseDir.getName() + "..." );
+        System.out.println( "Using staged module-pom: " + mangledPom.getAbsolutePath() );
+        executeMaven( mangledPom, properties, goals, true );
+
+        MavenProject project = readProject( mangledPom );
         File projectOutputDir = new File( project.getBuild().getDirectory() );
 
-        compareMackerOutput( baseDir, projectOutputDir );
+        compareMackerOutput( testModuleBaseDir, projectOutputDir );
     }
 
+    /**
+     * Inject the local repository into the test module project's POM.
+     *
+     * @param testModulePomFile The test module project POM
+     * @return the temporary file to which the mangled POM was written.
+     * @throws TestToolsException if any
+     */
+    private File manglePomForTestModule( File testModulePomFile ) throws TestToolsException
+    {
+        Model model = null;
+
+        Reader reader = null;
+        try
+        {
+            reader = ReaderFactory.newXmlReader( testModulePomFile );
+            model = new MavenXpp3Reader().read( reader );
+        }
+        catch ( IOException e )
+        {
+            throw new TestToolsException( "Error creating test-time version of POM for: " + testModulePomFile, e );
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new TestToolsException( "Error creating test-time version of POM for: " + testModulePomFile, e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+
+        File output = new File( testModulePomFile.getParentFile(), "pom-test-module.xml" );
+        output.deleteOnExit();
+        Writer writer = null;
+        try
+        {
+            Repository localAsRemote = new Repository();
+            localAsRemote.setId( "testing.mainLocalAsRemote" );
+            File localRepoDir = repositoryTool.findLocalRepositoryDirectory();
+            localAsRemote.setUrl( localRepoDir.toURI().toURL().toExternalForm() );
+
+            model.addRepository( localAsRemote );
+            model.addPluginRepository( localAsRemote );
+
+            DeploymentRepository deployRepo = new DeploymentRepository();
+            deployRepo.setId( "integration-test.output" );
+            File tmpDir = FileUtils.createTempFile( "integration-test-repo", "", null );
+            String tmpUrl = tmpDir.toURI().toURL().toExternalForm();
+            deployRepo.setUrl( tmpUrl );
+
+            DistributionManagement distMgmt = new DistributionManagement();
+            distMgmt.setRepository( deployRepo );
+            distMgmt.setSnapshotRepository( deployRepo );
+
+            Site site = new Site();
+            site.setId( "integration-test.output" );
+            site.setUrl( tmpUrl );
+            distMgmt.setSite( site );
+
+            model.setDistributionManagement( distMgmt );
+            model.addProperty( "integration-test.deployment.repo.url", tmpUrl );
+
+            writer = WriterFactory.newXmlWriter( output );
+            new MavenXpp3Writer().write( writer, model );
+        }
+        catch ( IOException e )
+        {
+            throw new TestToolsException( "Error creating test-time version of POM for: " + testModulePomFile, e );
+        }
+        finally
+        {
+            IOUtil.close( writer );
+        }
+        return output;
+    }
+    
     private void executeMaven( File pom, Properties properties, List goals, boolean switchLocalRepo )
          throws TestToolsException
     {
@@ -230,18 +322,23 @@ public abstract class AbstractMackerPluginITCase
             buildLog = new File( BUILD_OUTPUT_DIRECTORY, "unknown.build.log" );
         }
 
-        if (properties == null)
+        final Properties invocationProperties = new Properties();
+        if ( properties != null )
         {
-            properties = new Properties();
+            invocationProperties.putAll( properties );
         }
-        InvocationRequest request = buildTool.createBasicInvocationRequest( pom, properties, goals, buildLog );
+        InvocationRequest request = buildTool.createBasicInvocationRequest( pom, invocationProperties, goals, buildLog );
         request.setUpdateSnapshots( false );
         request.setShowErrors( true );
         request.getProperties().setProperty( "downloadSources", "false" );
         request.getProperties().setProperty( "downloadJavadocs", "false" );
         if ( System.getProperty( MavenSettingsBuilder.ALT_USER_SETTINGS_XML_LOCATION ) != null )
         {
-            request.setUserSettingsFile( new File( System.getProperty( MavenSettingsBuilder.ALT_USER_SETTINGS_XML_LOCATION ) ) );
+            File settings = new File( System.getProperty( MavenSettingsBuilder.ALT_USER_SETTINGS_XML_LOCATION ) );
+            if ( settings.exists() )
+            {
+                request.setUserSettingsFile( settings );
+            } // else allow empty setting to have default behaviour too
         }
 
         // request.setDebug( true );
