@@ -26,6 +26,7 @@ import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.test.plugin.BuildTool;
 import org.apache.maven.shared.test.plugin.PluginTestTool;
 import org.apache.maven.shared.test.plugin.ProjectTool;
+import org.apache.maven.shared.test.plugin.RepositoryTool;
 import org.apache.maven.shared.test.plugin.TestToolsException;
 
 import java.io.File;
@@ -58,6 +59,8 @@ public abstract class AbstractMackerPluginITCase
 
     private ProjectTool projectTool;
 
+    private RepositoryTool repositoryTool;
+
     /**
      * Test repository directory.
      */
@@ -66,14 +69,14 @@ public abstract class AbstractMackerPluginITCase
     /**
      * Pom File.
      */
-    private static File pomFile = new File( getBasedir(), "pom.xml" );
+    private static final File pomFile = new File( getBasedir(), "pom.xml" );
 
     /**
      * Version under which the plugin was installed to the test-time local repository for running test builds.
      */
     protected static final String VERSION = "test";
 
-    private static final String BUILD_OUTPUT_DIRECTORY = "target/failsafe-reports/maven-output";
+    private static final String BUILD_OUTPUT_DIRECTORY = "target/test-build-logs";
 
     private static boolean installed = false;
 
@@ -97,6 +100,7 @@ public abstract class AbstractMackerPluginITCase
 
         buildTool = (BuildTool) lookup( BuildTool.ROLE, "default" );
         projectTool = (ProjectTool) lookup( ProjectTool.ROLE, "default" );
+        repositoryTool = (RepositoryTool) lookup(RepositoryTool.ROLE, "default");
 
         String mavenHome = System.getProperty( "maven.home" );
         // maven.home is set by surefire when the test is run with maven, but better make the test
@@ -116,15 +120,18 @@ public abstract class AbstractMackerPluginITCase
             }
         }
         System.setProperty( "MAVEN_TERMINATE_CMD", "on" );
+        new File(BUILD_OUTPUT_DIRECTORY).mkdirs();
 
         synchronized (AbstractMackerPluginITCase.class)
         {
             if ( !installed )
             {
+                // this fails if the local repo is not in default place
+                // use setting -Dmaven.repo.local=<.repository> to fix this.
                 PluginTestTool pluginTestTool = (PluginTestTool) lookup( PluginTestTool.ROLE, "default" );
                 localRepositoryDirectory = pluginTestTool.preparePluginForUnitTestingWithMavenBuilds( pomFile, VERSION,
                         localRepositoryDirectory );
-                System.out.println( "*** Installed test-version of the Macker plugin to: " + localRepositoryDirectory );
+                System.out.println( "*** Installed test-version of the plugin to: " + localRepositoryDirectory );
                 installed = true;
             }
         }
@@ -165,7 +172,7 @@ public abstract class AbstractMackerPluginITCase
     protected void testProject( String projectName, String goalList )
         throws Exception
     {
-        File baseDir = getTestFile( "target/test-classes/it/" + projectName );
+        File baseDir = getTestFile( "target/it-build-target/test-classes/it/" + projectName );
         testProject( baseDir, new Properties(), goalList );
     }
 
@@ -187,6 +194,8 @@ public abstract class AbstractMackerPluginITCase
         {
             goals.add( goal[i] );
         }
+        System.out.println( "Now Building the test module " + baseDir.getName() + "..." );
+        System.out.println( "Using staged module-pom: " + pom.getAbsolutePath() );
         executeMaven( pom, properties, goals, true );
 
         MavenProject project = readProject( pom );
@@ -198,10 +207,6 @@ public abstract class AbstractMackerPluginITCase
     private void executeMaven( File pom, Properties properties, List goals, boolean switchLocalRepo )
          throws TestToolsException
     {
-        System.out.println( "  Building " + pom.getParentFile().getName() );
-
-        new File( BUILD_OUTPUT_DIRECTORY ).mkdirs();
-
         NullPointerException npe = new NullPointerException();
         StackTraceElement[] trace = npe.getStackTrace();
 
