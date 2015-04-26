@@ -17,11 +17,6 @@
     <url>http://code.google.com/p/code-cop-code/wiki/MackerMavenPlugin</url>
     <inceptionYear>2007</inceptionYear>
 
-    <ciManagement>
-        <system>Jenkins</system>
-        <url>https://codecop.ci.cloudbees.com/job/${project.artifactId}/</url>
-    </ciManagement>
-
     <organization>
         <name>CodeHaus</name>
         <url>http://www.codehaus.org</url>
@@ -270,14 +265,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-docck-plugin</artifactId>
                 <version>1.0</version>
-                <!-- 
-                <executions> 
-                    <execution> 
-                        <goals> 
-                            <goal>check</goal> 
-                        </goals> 
-                    </execution> 
-                </executions> 
+                <!--
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 -->
             </plugin>
             <plugin>
@@ -382,5 +377,5 @@
             <url>file:///Develop/Java/JDK-1.5_Maven/mvn2repo/sites/${project.artifactId}</url>
         </site>
     </distributionManagement>
-  
+
 </project>
