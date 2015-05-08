@@ -1,19 +1,18 @@
-#summary Clone of CodeHaus MOJO with patches.
-#labels Featured,Java,Macker,StaticCodeAnalysis,Maven,MOJO
-#sidebar MackerMavenPluginLinks
-
 # Macker Maven Plugin #
 CodeHaus hosts a simple [Macker MOJO](http://mojo.codehaus.org/macker-maven-plugin/). (Read what the plugin is supposed to do [here](http://mojo.codehaus.org/macker-maven-plugin/).) It's still in the MOJO sandbox and has not been released yet. Here is a clone of this Maven Macker MOJO. It contains all the original [Subversion history](http://svn.codehaus.org/mojo/trunk/sandbox/macker-maven-plugin/) together with ~~some changes~~ a lot of changes.
 
 
 ## Modifications ##
 The CodeHaus Maven Macker plugin only supports a very basic configuration. For example, there is no way to skip it's execution or to allow multiple rule-set files. I added more configuration options, e.g.
+
  * Skip execution (`<skip>`).
  * Work on test classes as well (`<includeTests>`).
  * Allow multiple rule-set files.
  * Find rules in the classpath.
  * Include and exclude files.
+
 In fact, this is everything the [Maven PMD plugin](http://maven.apache.org/plugins/maven-pmd-plugin/) is able to do and I copied the source [from there](http://svn.apache.org/viewvc/maven/plugins/trunk/maven-pmd-plugin/) ;-) Further more I added the following:
+
  * Some unit test cases for old and new functionality.
  * Made the whole thing Java 1.4 compatible to fix dependency problems.
  * It now skips the execution of the plugin for projects which are not Java, so it skips POM projects.
@@ -23,6 +22,7 @@ In fact, this is everything the [Maven PMD plugin](http://maven.apache.org/plugi
  * Had to change all license headers to the current Checkstyle format.
 
 Later, Mark noticed some license problems: Macker is only GPL (without the classpath exception) and must not be called from an ASL licensed plugin, but only with a forked JVM command-line as is done in the Cobertura plugin. So, I did the following:
+
  * Refactored the plugin to allow different implementations of calling Macker.
  * Added a forking implementation, which was mainly copied from the [Cobertura plugin](http://mojo.codehaus.org/cobertura-maven-plugin/).
  * Finally, I added some integration tests, which set-up I borrowed from the [Eclipse plugin](http://maven.apache.org/plugins/maven-eclipse-plugin/). See [my post about Maven plugin testing](http://blog.code-cop.org/2010/09/maven-plugin-testing-tools.html) for more details on using the Maven Plugin Testing Tools.
