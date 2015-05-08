@@ -1,5 +1,16 @@
 # Macker Maven Plugin #
-CodeHaus hosts a simple [Macker MOJO](http://mojo.codehaus.org/macker-maven-plugin/). (Read what the plugin is supposed to do [here](http://mojo.codehaus.org/macker-maven-plugin/).) It's still in the MOJO sandbox and has not been released yet. Here is a clone of this Maven Macker MOJO. It contains all the original [Subversion history](http://svn.codehaus.org/mojo/trunk/sandbox/macker-maven-plugin/) together with ~~some changes~~ a lot of changes.
+CodeHaus hosts a simple [Macker MOJO](http://mojo.codehaus.org/macker-maven-plugin/). (Read what the plugin is supposed to do [here](http://mojo.codehaus.org/macker-maven-plugin/).) It's still in the MOJO sandbox and has not been released. Here is a clone of this Maven Macker MOJO. It contains all the original [Subversion history](http://svn.codehaus.org/mojo/trunk/sandbox/macker-maven-plugin/) together with ~~some changes~~ a lot of changes.
+
+
+## Macker ##
+[Macker](http://www.innig.net/macker/) is a build-time architectural rule checking utility for Java developers. It's meant to model the architectural rules and helps to keep code clean and consistent. You can tailor a rules file to suit the structure of a specific project. Writing a rules file is part of the development process for each unique project. Macker was originally developed by Paul Cantrell. (This introduction is an excerpt from the [Macker FAQ](http://www.innig.net/macker/faq.html).)
+
+Macker is quite old, but we have been using it for years and it works well for us. See [what happens if you do not use it](http://blog.code-cop.org/2007/09/macker-check.html). It comes with Ant support, ~~but Maven integration has been lacking~~ and Maven integration is available as well.
+
+
+## Usage ##
+ * See the current [usage page](http://www.code-cop.org/mvn2repo/sites/macker-maven-plugin/usage.html) of Macker Maven plugin's Maven site.
+ * [Original plugin site](http://mojo.codehaus.org/macker-maven-plugin/).
 
 
 ## Modifications ##
@@ -28,16 +39,9 @@ Later, Mark noticed some license problems: Macker is only GPL (without the class
  * Finally, I added some integration tests, which set-up I borrowed from the [Eclipse plugin](http://maven.apache.org/plugins/maven-eclipse-plugin/). See [my post about Maven plugin testing](http://blog.code-cop.org/2010/09/maven-plugin-testing-tools.html) for more details on using the Maven Plugin Testing Tools.
 
 
-## Macker ##
-[Macker](http://www.innig.net/macker/) is a build-time architectural rule checking utility for Java developers. It's meant to model the architectural rules and helps to keep code clean and consistent. You can tailor a rules file to suit the structure of a specific project. Writing a rules file is part of the development process for each unique project. Macker was originally developed by Paul Cantrell. (This introduction is an excerpt from the [Macker FAQ](http://www.innig.net/macker/faq.html).)
-
-Macker is quite old, but we have been using it for years and it works well for us. See [what happens if you do not use it](http://blog.code-cop.org/2007/09/macker-check.html). It comes with Ant support, ~~but Maven integration has been lacking~~ and Maven integration is available as well.
-
-
-## Usage ##
- * See the current [usage page](http://www.code-cop.org/mvn2repo/sites/macker-maven-plugin/usage.html) of Macker Maven plugin's Maven site.
- * [Original plugin site](http://mojo.codehaus.org/macker-maven-plugin/).
-
-
 ## Releases ##
 A `1.0.0-SNAPSHOT` of my latest changes is available in my [Mvn2Repo](https://bitbucket.org/pkofler/mvn2repo). There is also a `0.9.0` unofficial release which does not fork Macker. For the current state of the patch see [ticket MOJO-1529](http://jira.codehaus.org/browse/MOJO-1529). The plugin has not been released.
+
+
+## License ##
+[Apache License 2.0](http://opensource.org/licenses/Apache-2.0).
